@@ -8,6 +8,8 @@ import type {
   Category,
 } from './types'
 
+const d = (locale: string, en: string, es: string) => (locale === 'es' ? es : en)
+
 // ============================================================
 // Shared graph data for BFS/DFS
 // ============================================================
@@ -88,7 +90,7 @@ Properties:
 
 Mainly used for educational purposes. For production, prefer Quick Sort or Merge Sort.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [38, 27, 43, 3, 9, 82, 10]
     const steps: Step[] = []
     const sorted: number[] = []
@@ -98,8 +100,7 @@ Mainly used for educational purposes. For production, prefer Quick Sort or Merge
       array: [...arr],
       highlights: {},
       sorted: [],
-      description:
-        'Initial array. Bubble Sort will compare adjacent elements and swap them if needed.',
+      description: d(locale, 'Initial array. Bubble Sort will compare adjacent elements and swap them if needed.', 'Arreglo inicial. Bubble Sort comparará elementos adyacentes y los intercambiará si es necesario.'),
       codeLine: 1,
       variables: { n, array: `[${arr.join(', ')}]` },
     })
@@ -121,7 +122,7 @@ Mainly used for educational purposes. For production, prefer Quick Sort or Merge
             array: [...arr],
             highlights: { [j]: 'swapped', [j + 1]: 'swapped' },
             sorted: [...sorted],
-            description: `Swapped! ${arr[j]} and ${arr[j + 1]}`,
+            description: d(locale, `Swapped! ${arr[j]} and ${arr[j + 1]}`, `¡Intercambiados! ${arr[j]} y ${arr[j + 1]}`),
             codeLine: 7,
             variables: { i, j, n, 'array[j]': arr[j], 'array[j+1]': arr[j + 1] },
           })
@@ -135,7 +136,7 @@ Mainly used for educational purposes. For production, prefer Quick Sort or Merge
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Bubble Sort complete.',
+      description: d(locale, 'Array is sorted! Bubble Sort complete.', '¡Arreglo ordenado! Bubble Sort completado.'),
       codeLine: 12,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -196,7 +197,7 @@ Properties:
 
 Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [64, 25, 12, 22, 11, 90, 45]
     const steps: Step[] = []
     const sorted: number[] = []
@@ -219,7 +220,7 @@ Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
         array: [...arr],
         highlights: { [i]: 'current', [minIndex]: 'minimum' },
         sorted: [...sorted],
-        description: `Starting pass ${i + 1}. Current minimum: ${arr[minIndex]} at index ${minIndex}`,
+        description: d(locale, `Starting pass ${i + 1}. Current minimum: ${arr[minIndex]} at index ${minIndex}`, `Iniciando pasada ${i + 1}. Mínimo actual: ${arr[minIndex]} en índice ${minIndex}`),
         codeLine: 4,
         variables: { i, minIndex, n, 'array[minIndex]': arr[minIndex] },
       })
@@ -229,7 +230,7 @@ Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
           array: [...arr],
           highlights: { [i]: 'current', [minIndex]: 'minimum', [j]: 'comparing' },
           sorted: [...sorted],
-          description: `Comparing ${arr[j]} with current minimum ${arr[minIndex]}`,
+          description: d(locale, `Comparing ${arr[j]} with current minimum ${arr[minIndex]}`, `Comparando ${arr[j]} con el mínimo actual ${arr[minIndex]}`),
           codeLine: 7,
           variables: { i, j, minIndex, 'array[j]': arr[j], 'array[minIndex]': arr[minIndex] },
         })
@@ -240,7 +241,7 @@ Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
             array: [...arr],
             highlights: { [i]: 'current', [minIndex]: 'minimum' },
             sorted: [...sorted],
-            description: `New minimum found: ${arr[minIndex]} at index ${minIndex}`,
+            description: d(locale, `New minimum found: ${arr[minIndex]} at index ${minIndex}`, `Nuevo mínimo encontrado: ${arr[minIndex]} en índice ${minIndex}`),
             codeLine: 8,
             variables: { i, j, minIndex, 'array[j]': arr[j], 'array[minIndex]': arr[minIndex] },
           })
@@ -253,7 +254,7 @@ Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
           array: [...arr],
           highlights: { [i]: 'swapped', [minIndex]: 'swapped' },
           sorted: [...sorted],
-          description: `Swapped ${arr[i]} and ${arr[minIndex]}`,
+          description: d(locale, `Swapped ${arr[i]} and ${arr[minIndex]}`, `Intercambiados ${arr[i]} y ${arr[minIndex]}`),
           codeLine: 13,
           variables: { i, minIndex, 'array[i]': arr[i], 'array[minIndex]': arr[minIndex] },
         })
@@ -267,7 +268,7 @@ Useful when memory writes are expensive, as it performs at most O(n) swaps.`,
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Selection Sort complete.',
+      description: d(locale, 'Array is sorted! Selection Sort complete.', '¡Arreglo ordenado! Selection Sort completado.'),
       codeLine: 17,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -327,7 +328,7 @@ Properties:
 
 Excellent for small datasets or nearly sorted data. Often used as the base case in hybrid sorting algorithms like Timsort.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [12, 11, 13, 5, 6, 7, 42]
     const steps: Step[] = []
     const sorted: number[] = [0]
@@ -337,7 +338,7 @@ Excellent for small datasets or nearly sorted data. Often used as the base case 
       array: [...arr],
       highlights: {},
       sorted: [0],
-      description: 'Initial array. First element is considered sorted.',
+      description: d(locale, 'Initial array. First element is considered sorted.', 'Arreglo inicial. El primer elemento se considera ordenado.'),
       codeLine: 1,
       variables: { n, array: `[${arr.join(', ')}]` },
     })
@@ -349,7 +350,7 @@ Excellent for small datasets or nearly sorted data. Often used as the base case 
         array: [...arr],
         highlights: { [i]: 'selected' },
         sorted: [...sorted],
-        description: `Picking element ${key} at index ${i} to insert into sorted portion`,
+        description: d(locale, `Picking element ${key} at index ${i} to insert into sorted portion`, `Seleccionando elemento ${key} en índice ${i} para insertar en la porción ordenada`),
         codeLine: 4,
         variables: { i, key, j: i - 1, n },
       })
@@ -372,7 +373,7 @@ Excellent for small datasets or nearly sorted data. Often used as the base case 
           array: [...arr],
           highlights: j >= 0 ? { [j]: 'comparing', [j + 1]: 'swapped' } : { [j + 1]: 'swapped' },
           sorted: [...sorted],
-          description: `Shifted. Checking next position...`,
+          description: d(locale, `Shifted. Checking next position...`, 'Desplazado. Verificando siguiente posición...'),
           codeLine: 8,
           variables: { i, j, key, 'array[j+1]': arr[j + 1] },
         })
@@ -385,7 +386,7 @@ Excellent for small datasets or nearly sorted data. Often used as the base case 
         array: [...arr],
         highlights: { [j + 1]: 'found' },
         sorted: [...sorted],
-        description: `Inserted ${key} at index ${j + 1}`,
+        description: d(locale, `Inserted ${key} at index ${j + 1}`, `Insertado ${key} en índice ${j + 1}`),
         codeLine: 11,
         variables: { i, j: j + 1, key },
       })
@@ -459,7 +460,7 @@ Properties:
 
 Quick Sort is one of the fastest general-purpose sorting algorithms in practice. Used in many standard library implementations.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [38, 27, 43, 3, 9, 82, 10]
     const steps: Step[] = []
     const sorted: number[] = []
@@ -469,7 +470,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: 'Initial array. Quick Sort will pick a pivot and partition the array around it.',
+      description: d(locale, 'Initial array. Quick Sort will pick a pivot and partition the array around it.', 'Arreglo inicial. Quick Sort elegirá un pivote y particionará el arreglo alrededor de él.'),
       codeLine: 1,
       variables: { low: 0, high: n - 1, array: `[${arr.join(', ')}]` },
     })
@@ -482,7 +483,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
           array: [...arr],
           highlights: { [low]: 'sorted' },
           sorted: [...sorted],
-          description: `Element ${arr[low]} is in its final position (single element)`,
+          description: d(locale, `Element ${arr[low]} is in its final position (single element)`, `El elemento ${arr[low]} está en su posición final (elemento único)`),
           codeLine: 2,
           variables: { low, high, 'arr[low]': arr[low] },
         })
@@ -507,7 +508,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
           array: [...arr],
           highlights: { [j]: 'comparing', [high]: 'pivot' },
           sorted: [...sorted],
-          description: `Comparing ${arr[j]} with pivot ${pivot}`,
+          description: d(locale, `Comparing ${arr[j]} with pivot ${pivot}`, `Comparando ${arr[j]} con pivote ${pivot}`),
           codeLine: 14,
           variables: { j, i, pivot, 'arr[j]': arr[j] },
         })
@@ -520,7 +521,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
               array: [...arr],
               highlights: { [i]: 'swapped', [j]: 'swapped', [high]: 'pivot' },
               sorted: [...sorted],
-              description: `${arr[i]} <= pivot, swapped positions ${i} and ${j}`,
+              description: d(locale, `${arr[i]} <= pivot, swapped positions ${i} and ${j}`, `${arr[i]} <= pivote, intercambiadas posiciones ${i} y ${j}`),
               codeLine: 16,
               variables: { j, i, pivot, 'arr[i]': arr[i], 'arr[j]': arr[j] },
             })
@@ -536,7 +537,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
         array: [...arr],
         highlights: { [pivotIdx]: 'found' },
         sorted: [...sorted],
-        description: `Pivot ${arr[pivotIdx]} placed at final position ${pivotIdx}`,
+        description: d(locale, `Pivot ${arr[pivotIdx]} placed at final position ${pivotIdx}`, `Pivote ${arr[pivotIdx]} colocado en posición final ${pivotIdx}`),
         codeLine: 20,
         variables: { pivotIdx, 'arr[pivotIdx]': arr[pivotIdx] },
       })
@@ -551,7 +552,7 @@ Quick Sort is one of the fastest general-purpose sorting algorithms in practice.
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Quick Sort complete.',
+      description: d(locale, 'Array is sorted! Quick Sort complete.', '¡Arreglo ordenado! Quick Sort completado.'),
       codeLine: 6,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -621,7 +622,7 @@ Properties:
 
 Merge Sort guarantees O(n log n) performance regardless of input. Ideal when stability is required or for sorting linked lists.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [38, 27, 43, 3, 9, 82, 10]
     const steps: Step[] = []
     const n = arr.length
@@ -630,7 +631,7 @@ Merge Sort guarantees O(n log n) performance regardless of input. Ideal when sta
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: 'Initial array. Merge Sort will divide and merge sorted halves.',
+      description: d(locale, 'Initial array. Merge Sort will divide and merge sorted halves.', 'Arreglo inicial. Merge Sort dividirá y mezclará mitades ordenadas.'),
       codeLine: 1,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -667,7 +668,7 @@ Merge Sort guarantees O(n log n) performance regardless of input. Ideal when sta
           array: [...arr],
           highlights: { [i]: 'left', [j]: 'right' },
           sorted: [],
-          description: `Merging: comparing ${arr[i]} (left) and ${arr[j]} (right)`,
+          description: d(locale, `Merging: comparing ${arr[i]} (left) and ${arr[j]} (right)`, `Mezclando: comparando ${arr[i]} (izquierda) y ${arr[j]} (derecha)`),
           codeLine: 14,
           variables: {
             i,
@@ -702,7 +703,7 @@ Merge Sort guarantees O(n log n) performance regardless of input. Ideal when sta
         array: [...arr],
         highlights: mergedH,
         sorted: [],
-        description: `Merged [${start}..${end}]: [${arr.slice(start, end + 1).join(', ')}]`,
+        description: d(locale, `Merged [${start}..${end}]: [${arr.slice(start, end + 1).join(', ')}]`, `Mezclado [${start}..${end}]: [${arr.slice(start, end + 1).join(', ')}]`),
         codeLine: 25,
         variables: { start, end, result: `[${arr.slice(start, end + 1).join(', ')}]` },
       })
@@ -791,7 +792,7 @@ Properties:
 
 Useful when worst-case performance matters and stability is not required.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [38, 27, 43, 3, 9, 82, 10]
     const steps: Step[] = []
     const n = arr.length
@@ -817,7 +818,7 @@ Useful when worst-case performance matters and stability is not required.`,
           array: [...arr],
           highlights: { [root]: 'comparing', [left]: 'comparing' },
           sorted: [...sortedIndices],
-          description: `Heapify: comparing parent ${arr[root]} (index ${root}) with left child ${arr[left]} (index ${left})`,
+          description: d(locale, `Heapify: comparing parent ${arr[root]} (index ${root}) with left child ${arr[left]} (index ${left})`, `Heapify: comparando padre ${arr[root]} (índice ${root}) con hijo izquierdo ${arr[left]} (índice ${left})`),
           codeLine: 23,
           variables: { root, left, right, largest, size },
         })
@@ -831,7 +832,7 @@ Useful when worst-case performance matters and stability is not required.`,
           array: [...arr],
           highlights: { [root]: 'comparing', [right]: 'comparing' },
           sorted: [...sortedIndices],
-          description: `Heapify: comparing ${arr[root]} (index ${root}) with right child ${arr[right]} (index ${right})`,
+          description: d(locale, `Heapify: comparing ${arr[root]} (index ${root}) with right child ${arr[right]} (index ${right})`, `Heapify: comparando ${arr[root]} (índice ${root}) con hijo derecho ${arr[right]} (índice ${right})`),
           codeLine: 27,
           variables: { root, left, right, largest, size },
         })
@@ -859,7 +860,7 @@ Useful when worst-case performance matters and stability is not required.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: 'Phase 1: Building max heap from the array.',
+      description: d(locale, 'Phase 1: Building max heap from the array.', 'Fase 1: Construyendo max-heap a partir del arreglo.'),
       codeLine: 5,
       variables: { n },
     })
@@ -869,7 +870,7 @@ Useful when worst-case performance matters and stability is not required.`,
         array: [...arr],
         highlights: { [i]: 'current' },
         sorted: [],
-        description: `Heapifying subtree rooted at index ${i} (value ${arr[i]})`,
+        description: d(locale, `Heapifying subtree rooted at index ${i} (value ${arr[i]})`, `Heapificando subárbol con raíz en índice ${i} (valor ${arr[i]})`),
         codeLine: 6,
         variables: { i },
       })
@@ -880,7 +881,7 @@ Useful when worst-case performance matters and stability is not required.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Max heap built: [${arr.join(', ')}]. Phase 2: Extract elements.`,
+      description: d(locale, `Max heap built: [${arr.join(', ')}]. Phase 2: Extract elements.`, `Max-heap construido: [${arr.join(', ')}]. Fase 2: Extraer elementos.`),
       codeLine: 10,
       variables: { heap: `[${arr.join(', ')}]` },
     })
@@ -891,7 +892,7 @@ Useful when worst-case performance matters and stability is not required.`,
         array: [...arr],
         highlights: { [0]: 'selected', [i]: 'selected' },
         sorted: [...sortedIndices],
-        description: `Swap max element ${arr[0]} with element ${arr[i]} at index ${i}`,
+        description: d(locale, `Swap max element ${arr[0]} with element ${arr[i]} at index ${i}`, `Intercambiar elemento máximo ${arr[0]} con elemento ${arr[i]} en índice ${i}`),
         codeLine: 11,
         variables: { i, max: arr[0] },
       })
@@ -903,7 +904,7 @@ Useful when worst-case performance matters and stability is not required.`,
         array: [...arr],
         highlights: { [i]: 'sorted' },
         sorted: [...sortedIndices],
-        description: `${arr[i]} placed in final position. Heapify remaining heap of size ${i}.`,
+        description: d(locale, `${arr[i]} placed in final position. Heapify remaining heap of size ${i}.`, `${arr[i]} colocado en posición final. Heapificar heap restante de tamaño ${i}.`),
         codeLine: 12,
         variables: { i, sorted: arr[i] },
       })
@@ -982,7 +983,7 @@ Properties:
 
 Ideal for sorting integers within a known, limited range.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [4, 2, 2, 8, 3, 3, 1]
     const steps: Step[] = []
     const n = arr.length
@@ -994,8 +995,7 @@ Ideal for sorting integers within a known, limited range.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description:
-        'Initial array. Counting Sort will count occurrences of each value to determine sorted positions.',
+      description: d(locale, 'Initial array. Counting Sort will count occurrences of each value to determine sorted positions.', 'Arreglo inicial. Counting Sort contará las ocurrencias de cada valor para determinar posiciones ordenadas.'),
       codeLine: 1,
       variables: { n, max, array: `[${arr.join(', ')}]` },
     })
@@ -1007,7 +1007,7 @@ Ideal for sorting integers within a known, limited range.`,
         array: [...arr],
         highlights: { [i]: 'current' },
         sorted: [],
-        description: `Counting element ${arr[i]} at index ${i}. count[${arr[i]}] = ${count[arr[i]]}`,
+        description: d(locale, `Counting element ${arr[i]} at index ${i}. count[${arr[i]}] = ${count[arr[i]]}`, `Contando elemento ${arr[i]} en índice ${i}. count[${arr[i]}] = ${count[arr[i]]}`),
         codeLine: 8,
         variables: { i, 'array[i]': arr[i], count: `[${count.join(', ')}]` },
       })
@@ -1017,7 +1017,7 @@ Ideal for sorting integers within a known, limited range.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Counting complete: [${count.join(', ')}]. Computing cumulative counts.`,
+      description: d(locale, `Counting complete: [${count.join(', ')}]. Computing cumulative counts.`, `Conteo completo: [${count.join(', ')}]. Calculando conteos acumulados.`),
       codeLine: 12,
       variables: { count: `[${count.join(', ')}]` },
     })
@@ -1031,7 +1031,7 @@ Ideal for sorting integers within a known, limited range.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Cumulative counts: [${count.join(', ')}]. Now placing elements in sorted positions.`,
+      description: d(locale, `Cumulative counts: [${count.join(', ')}]. Now placing elements in sorted positions.`, `Conteos acumulados: [${count.join(', ')}]. Colocando elementos en posiciones ordenadas.`),
       codeLine: 14,
       variables: { count: `[${count.join(', ')}]` },
     })
@@ -1054,7 +1054,7 @@ Ideal for sorting integers within a known, limited range.`,
         array: [...output],
         highlights: h,
         sorted: [],
-        description: `Placing ${arr[i]} at output position ${pos}`,
+        description: d(locale, `Placing ${arr[i]} at output position ${pos}`, `Colocando ${arr[i]} en posición de salida ${pos}`),
         codeLine: 18,
         variables: { i, 'array[i]': arr[i], pos, output: `[${output.join(', ')}]` },
       })
@@ -1064,7 +1064,7 @@ Ideal for sorting integers within a known, limited range.`,
       array: [...output],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Counting Sort complete.',
+      description: d(locale, 'Array is sorted! Counting Sort complete.', '¡Arreglo ordenado! Counting Sort completado.'),
       codeLine: 22,
       variables: { output: `[${output.join(', ')}]` },
     })
@@ -1142,7 +1142,7 @@ Properties:
 
 Ideal for sorting large sets of integers or strings with bounded length.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [170, 45, 75, 90, 802, 24, 2, 66]
     const steps: Step[] = []
     const n = arr.length
@@ -1152,14 +1152,14 @@ Ideal for sorting large sets of integers or strings with bounded length.`,
       array: [...arr],
       highlights: {},
       sorted: [],
-      description:
-        'Initial array. Radix Sort will sort digit by digit, from least significant to most significant.',
+      description: d(locale, 'Initial array. Radix Sort will sort digit by digit, from least significant to most significant.', 'Arreglo inicial. Radix Sort ordenará dígito a dígito, del menos significativo al más significativo.'),
       codeLine: 1,
       variables: { n, max, array: `[${arr.join(', ')}]` },
     })
 
     for (let exp = 1; Math.floor(max / exp) > 0; exp *= 10) {
       const digitName = exp === 1 ? 'ones' : exp === 10 ? 'tens' : 'hundreds'
+      const digitNameEs = exp === 1 ? 'unidades' : exp === 10 ? 'decenas' : 'centenas'
       const digits = arr.map((x) => Math.floor(x / exp) % 10)
 
       const allCurrentH: Record<number, HighlightType> = {}
@@ -1169,7 +1169,7 @@ Ideal for sorting large sets of integers or strings with bounded length.`,
         array: [...arr],
         highlights: allCurrentH,
         sorted: [],
-        description: `Sorting by ${digitName} digit. Digits: [${digits.join(', ')}]`,
+        description: d(locale, `Sorting by ${digitName} digit. Digits: [${digits.join(', ')}]`, `Ordenando por dígito de ${digitNameEs}. Dígitos: [${digits.join(', ')}]`),
         codeLine: 4,
         variables: { exp, digits: `[${digits.join(', ')}]` },
       })
@@ -1204,7 +1204,7 @@ Ideal for sorting large sets of integers or strings with bounded length.`,
         array: [...arr],
         highlights: allActiveH,
         sorted: [],
-        description: `After sorting by ${digitName} digit: [${arr.join(', ')}]`,
+        description: d(locale, `After sorting by ${digitName} digit: [${arr.join(', ')}]`, `Después de ordenar por dígito de ${digitNameEs}: [${arr.join(', ')}]`),
         codeLine: 5,
         variables: { exp, array: `[${arr.join(', ')}]` },
       })
@@ -1214,7 +1214,7 @@ Ideal for sorting large sets of integers or strings with bounded length.`,
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Radix Sort complete.',
+      description: d(locale, 'Array is sorted! Radix Sort complete.', '¡Arreglo ordenado! Radix Sort completado.'),
       codeLine: 8,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -1275,7 +1275,7 @@ Properties:
 
 A good general-purpose algorithm; much faster than Insertion Sort for medium-sized arrays.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [38, 27, 43, 3, 9, 82, 10]
     const steps: Step[] = []
     const n = arr.length
@@ -1284,8 +1284,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
       array: [...arr],
       highlights: {},
       sorted: [],
-      description:
-        'Initial array. Shell Sort uses decreasing gap sequences to sort far-apart elements first.',
+      description: d(locale, 'Initial array. Shell Sort uses decreasing gap sequences to sort far-apart elements first.', 'Arreglo inicial. Shell Sort usa secuencias de brechas decrecientes para ordenar primero elementos lejanos.'),
       codeLine: 1,
       variables: { n, array: `[${arr.join(', ')}]` },
     })
@@ -1295,7 +1294,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
         array: [...arr],
         highlights: {},
         sorted: [],
-        description: `Starting pass with gap = ${gap}`,
+        description: d(locale, `Starting pass with gap = ${gap}`, `Iniciando pasada con brecha = ${gap}`),
         codeLine: 4,
         variables: { gap },
       })
@@ -1308,7 +1307,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
           array: [...arr],
           highlights: { [i]: 'current' },
           sorted: [],
-          description: `Gap ${gap}: Inserting element ${arr[i]} at index ${i}`,
+          description: d(locale, `Gap ${gap}: Inserting element ${arr[i]} at index ${i}`, `Brecha ${gap}: Insertando elemento ${arr[i]} en índice ${i}`),
           codeLine: 6,
           variables: { gap, i, temp, j },
         })
@@ -1318,7 +1317,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
             array: [...arr],
             highlights: { [j]: 'comparing', [j - gap]: 'comparing' },
             sorted: [],
-            description: `Comparing: ${arr[j - gap]} (index ${j - gap}) > ${temp} — shift right`,
+            description: d(locale, `Comparing: ${arr[j - gap]} (index ${j - gap}) > ${temp} — shift right`, `Comparando: ${arr[j - gap]} (índice ${j - gap}) > ${temp} — desplazar a la derecha`),
             codeLine: 9,
             variables: { gap, i, j, temp, 'array[j-gap]': arr[j - gap] },
           })
@@ -1330,7 +1329,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
             array: [...arr],
             highlights: { [j + gap]: 'swapped' },
             sorted: [],
-            description: `Shifted ${arr[j + gap]} to index ${j + gap}`,
+            description: d(locale, `Shifted ${arr[j + gap]} to index ${j + gap}`, `Desplazado ${arr[j + gap]} al índice ${j + gap}`),
             codeLine: 10,
             variables: { gap, i, j, temp },
           })
@@ -1342,7 +1341,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
             array: [...arr],
             highlights: { [j]: 'selected' },
             sorted: [],
-            description: `Placed ${temp} at index ${j}`,
+            description: d(locale, `Placed ${temp} at index ${j}`, `Colocado ${temp} en índice ${j}`),
             codeLine: 14,
             variables: { gap, i, j, temp },
           })
@@ -1353,7 +1352,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
         array: [...arr],
         highlights: {},
         sorted: [],
-        description: `Gap ${gap} pass complete: [${arr.join(', ')}]`,
+        description: d(locale, `Gap ${gap} pass complete: [${arr.join(', ')}]`, `Pasada con brecha ${gap} completa: [${arr.join(', ')}]`),
         codeLine: 16,
         variables: { gap, array: `[${arr.join(', ')}]` },
       })
@@ -1363,7 +1362,7 @@ A good general-purpose algorithm; much faster than Insertion Sort for medium-siz
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: 'Array is sorted! Shell Sort complete.',
+      description: d(locale, 'Array is sorted! Shell Sort complete.', '¡Arreglo ordenado! Shell Sort completado.'),
       codeLine: 18,
       variables: { array: `[${arr.join(', ')}]` },
     })
@@ -1420,7 +1419,7 @@ Space Complexity: O(1) — iterative version
 
 Binary Search is fundamental in computer science and is used extensively in databases, file systems, and as a building block for more complex algorithms.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
     const target = 23
     const steps: Step[] = []
@@ -1429,7 +1428,7 @@ Binary Search is fundamental in computer science and is used extensively in data
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: arr.length }, (_, i) => i),
-      description: `Sorted array. Searching for target: ${target}`,
+      description: d(locale, `Sorted array. Searching for target: ${target}`, `Arreglo ordenado. Buscando objetivo: ${target}`),
       codeLine: 1,
       variables: { target, low: 0, high: arr.length - 1 },
     })
@@ -1448,7 +1447,7 @@ Binary Search is fundamental in computer science and is used extensively in data
         array: [...arr],
         highlights: rangeH,
         sorted: [],
-        description: `Search range [${low}..${high}], checking middle index ${mid}: value ${arr[mid]}`,
+        description: d(locale, `Search range [${low}..${high}], checking middle index ${mid}: value ${arr[mid]}`, `Rango de búsqueda [${low}..${high}], verificando índice medio ${mid}: valor ${arr[mid]}`),
         codeLine: 6,
         variables: { low, high, mid, target, 'array[mid]': arr[mid] },
       })
@@ -1458,7 +1457,7 @@ Binary Search is fundamental in computer science and is used extensively in data
           array: [...arr],
           highlights: { [mid]: 'found' },
           sorted: [],
-          description: `Found ${target} at index ${mid}!`,
+          description: d(locale, `Found ${target} at index ${mid}!`, `¡${target} encontrado en índice ${mid}!`),
           codeLine: 8,
           variables: { low, high, mid, target, 'array[mid]': arr[mid], result: mid },
         })
@@ -1468,7 +1467,7 @@ Binary Search is fundamental in computer science and is used extensively in data
           array: [...arr],
           highlights: { [mid]: 'comparing' },
           sorted: [],
-          description: `${arr[mid]} < ${target}, searching right half`,
+          description: d(locale, `${arr[mid]} < ${target}, searching right half`, `${arr[mid]} < ${target}, buscando en mitad derecha`),
           codeLine: 10,
           variables: { low: mid + 1, high, mid, target, 'array[mid]': arr[mid] },
         })
@@ -1478,7 +1477,7 @@ Binary Search is fundamental in computer science and is used extensively in data
           array: [...arr],
           highlights: { [mid]: 'comparing' },
           sorted: [],
-          description: `${arr[mid]} > ${target}, searching left half`,
+          description: d(locale, `${arr[mid]} > ${target}, searching left half`, `${arr[mid]} > ${target}, buscando en mitad izquierda`),
           codeLine: 12,
           variables: { low, high: mid - 1, mid, target, 'array[mid]': arr[mid] },
         })
@@ -1490,7 +1489,7 @@ Binary Search is fundamental in computer science and is used extensively in data
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Target ${target} not found in the array.`,
+      description: d(locale, `Target ${target} not found in the array.`, `Objetivo ${target} no encontrado en el arreglo.`),
       codeLine: 16,
       variables: { low, high, target, result: -1 },
     })
@@ -1540,7 +1539,7 @@ Properties:
 
 Linear Search is useful for small datasets or unsorted data where more efficient algorithms cannot be applied.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [14, 33, 27, 10, 35, 19, 42, 44]
     const target = 35
     const steps: Step[] = []
@@ -1549,7 +1548,7 @@ Linear Search is useful for small datasets or unsorted data where more efficient
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Unsorted array. Searching for target: ${target}`,
+      description: d(locale, `Unsorted array. Searching for target: ${target}`, `Arreglo sin ordenar. Buscando objetivo: ${target}`),
       codeLine: 1,
       variables: { target, 'array.length': arr.length },
     })
@@ -1559,7 +1558,7 @@ Linear Search is useful for small datasets or unsorted data where more efficient
         array: [...arr],
         highlights: { [i]: 'current' },
         sorted: [],
-        description: `Checking index ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`,
+        description: d(locale, `Checking index ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`, `Verificando índice ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`),
         codeLine: 2,
         variables: { i, target, 'array[i]': arr[i] },
       })
@@ -1569,7 +1568,7 @@ Linear Search is useful for small datasets or unsorted data where more efficient
           array: [...arr],
           highlights: { [i]: 'found' },
           sorted: [],
-          description: `Found ${target} at index ${i}!`,
+          description: d(locale, `Found ${target} at index ${i}!`, `¡${target} encontrado en índice ${i}!`),
           codeLine: 3,
           variables: { i, target, 'array[i]': arr[i], result: i },
         })
@@ -1581,7 +1580,7 @@ Linear Search is useful for small datasets or unsorted data where more efficient
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Target ${target} not found.`,
+      description: d(locale, `Target ${target} not found.`, `Objetivo ${target} no encontrado.`),
       codeLine: 7,
       variables: { target, result: -1 },
     })
@@ -1645,7 +1644,7 @@ Properties:
 
 Jump Search is useful when jumping back is costly (e.g., on tape drives). It provides a good middle ground between Linear and Binary Search.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
     const target = 38
     const steps: Step[] = []
@@ -1656,7 +1655,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: `Sorted array. Searching for target: ${target}. Jump size: √${n} = ${jump}`,
+      description: d(locale, `Sorted array. Searching for target: ${target}. Jump size: √${n} = ${jump}`, `Arreglo ordenado. Buscando objetivo: ${target}. Tamaño de salto: √${n} = ${jump}`),
       codeLine: 1,
       variables: { target, n, jump },
     })
@@ -1674,7 +1673,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
         array: [...arr],
         highlights: blockH,
         sorted: [],
-        description: `Jumping: arr[${curr}] = ${arr[curr]} ≤ ${target}. Jump to next block.`,
+        description: d(locale, `Jumping: arr[${curr}] = ${arr[curr]} ≤ ${target}. Jump to next block.`, `Saltando: arr[${curr}] = ${arr[curr]} ≤ ${target}. Saltar al siguiente bloque.`),
         codeLine: 8,
         variables: { prev, curr, jump, 'arr[curr]': arr[curr], target },
       })
@@ -1692,7 +1691,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
       array: [...arr],
       highlights: searchBlockH,
       sorted: [],
-      description: `Target must be in block [${prev}..${endIdx}]. Starting linear search.`,
+      description: d(locale, `Target must be in block [${prev}..${endIdx}]. Starting linear search.`, `El objetivo debe estar en el bloque [${prev}..${endIdx}]. Iniciando búsqueda lineal.`),
       codeLine: 12,
       variables: { prev, end: Math.min(curr, n), target },
     })
@@ -1703,7 +1702,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
         array: [...arr],
         highlights: { [i]: 'current' },
         sorted: [],
-        description: `Checking index ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`,
+        description: d(locale, `Checking index ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`, `Verificando índice ${i}: ${arr[i]} ${arr[i] === target ? '=' : '≠'} ${target}`),
         codeLine: 13,
         variables: { i, 'arr[i]': arr[i], target },
       })
@@ -1713,7 +1712,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
           array: [...arr],
           highlights: { [i]: 'found' },
           sorted: [],
-          description: `Found ${target} at index ${i}!`,
+          description: d(locale, `Found ${target} at index ${i}!`, `¡${target} encontrado en índice ${i}!`),
           codeLine: 14,
           variables: { i, target, result: i },
         })
@@ -1725,7 +1724,7 @@ Jump Search is useful when jumping back is costly (e.g., on tape drives). It pro
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Target ${target} not found.`,
+      description: d(locale, `Target ${target} not found.`, `Objetivo ${target} no encontrado.`),
       codeLine: 19,
       variables: { target, result: -1 },
     })
@@ -1787,7 +1786,7 @@ Space Complexity: O(1)
 
 Interpolation Search excels on large, uniformly distributed datasets. For non-uniform data, Binary Search may be more reliable.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const arr = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     const target = 70
     const steps: Step[] = []
@@ -1797,7 +1796,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
       array: [...arr],
       highlights: {},
       sorted: Array.from({ length: n }, (_, i) => i),
-      description: `Uniformly distributed sorted array. Searching for target: ${target}`,
+      description: d(locale, `Uniformly distributed sorted array. Searching for target: ${target}`, `Arreglo ordenado uniformemente distribuido. Buscando objetivo: ${target}`),
       codeLine: 1,
       variables: { target, low: 0, high: n - 1 },
     })
@@ -1816,7 +1815,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
         array: [...arr],
         highlights: rangeH,
         sorted: [],
-        description: `Range [${low}..${high}]. Estimated position: ${pos} (value ${arr[pos]})`,
+        description: d(locale, `Range [${low}..${high}]. Estimated position: ${pos} (value ${arr[pos]})`, `Rango [${low}..${high}]. Posición estimada: ${pos} (valor ${arr[pos]})`),
         codeLine: 7,
         variables: { low, high, pos, target, 'arr[pos]': arr[pos] },
       })
@@ -1826,7 +1825,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
           array: [...arr],
           highlights: { [pos]: 'found' },
           sorted: [],
-          description: `Found ${target} at index ${pos}!`,
+          description: d(locale, `Found ${target} at index ${pos}!`, `¡${target} encontrado en índice ${pos}!`),
           codeLine: 12,
           variables: { low, high, pos, target, result: pos },
         })
@@ -1836,7 +1835,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
           array: [...arr],
           highlights: { [pos]: 'comparing' },
           sorted: [],
-          description: `${arr[pos]} < ${target}, narrowing to right portion`,
+          description: d(locale, `${arr[pos]} < ${target}, narrowing to right portion`, `${arr[pos]} < ${target}, acotando a la porción derecha`),
           codeLine: 14,
           variables: { low: pos + 1, high, pos, target },
         })
@@ -1846,7 +1845,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
           array: [...arr],
           highlights: { [pos]: 'comparing' },
           sorted: [],
-          description: `${arr[pos]} > ${target}, narrowing to left portion`,
+          description: d(locale, `${arr[pos]} > ${target}, narrowing to left portion`, `${arr[pos]} > ${target}, acotando a la porción izquierda`),
           codeLine: 16,
           variables: { low, high: pos - 1, pos, target },
         })
@@ -1858,7 +1857,7 @@ Interpolation Search excels on large, uniformly distributed datasets. For non-un
       array: [...arr],
       highlights: {},
       sorted: [],
-      description: `Target ${target} not found.`,
+      description: d(locale, `Target ${target} not found.`, `Objetivo ${target} no encontrado.`),
       codeLine: 21,
       variables: { target, result: -1 },
     })
@@ -1920,7 +1919,7 @@ Applications:
 
 BFS guarantees finding the shortest path (fewest edges) between two nodes in an unweighted graph.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const steps: Step[] = []
     const visited = new Set<number>()
     const visitedNodes: number[] = []
@@ -2060,7 +2059,7 @@ Applications:
 
 DFS explores deep paths first, which makes it useful for topological sorting and cycle detection, but it doesn't guarantee shortest paths.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const steps: Step[] = []
     const visited = new Set<number>()
     const visitedNodes: number[] = []
@@ -2241,7 +2240,7 @@ Applications:
 
 Dijkstra's is one of the most important graph algorithms and guarantees optimal shortest paths for non-negative weights.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const djNodes: GraphNode[] = [
       { id: 0, label: 'A', x: 100, y: 50 },
       { id: 1, label: 'B', x: 300, y: 50 },
@@ -2468,7 +2467,7 @@ Applications:
 
 Prim's Algorithm is a greedy algorithm that always picks the locally optimal edge, which leads to the globally optimal MST.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const prNodes: GraphNode[] = [
       { id: 0, label: 'A', x: 100, y: 50 },
       { id: 1, label: 'B', x: 300, y: 50 },
@@ -2692,7 +2691,7 @@ Applications:
 
 If the graph has a cycle, a topological ordering is not possible (not all nodes will be included in the result).`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const tsNodes: GraphNode[] = [
       { id: 0, label: 'A', x: 50, y: 50 },
       { id: 1, label: 'B', x: 200, y: 50 },
@@ -2905,7 +2904,7 @@ Space Complexity: O(N²) — for the board
 
 The N-Queens problem is a classic example of backtracking algorithms and constraint satisfaction problems.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const N = 5
     const board: (number | string)[][] = Array.from({ length: N }, () =>
       Array.from({ length: N }, () => 0),
@@ -3045,7 +3044,7 @@ Space Complexity: O(n)
 
 This approach avoids the exponential time of naive recursion by storing previously computed values. It demonstrates the core DP principle: solve smaller subproblems first and build up to the answer.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const n = 10
     const arr = [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     const steps: Step[] = []
@@ -3142,7 +3141,7 @@ Space Complexity: O(n × W)
 
 Classic DP optimization problem used in resource allocation, budgeting, and cargo loading.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const weights = [2, 3, 4, 5]
     const values = [3, 4, 5, 6]
     const capacity = 8
@@ -3265,7 +3264,7 @@ Space Complexity: O(m × n)
 
 Used in diff tools, DNA sequence alignment, version control systems, and spell checking.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const str1 = 'ABCB'
     const str2 = 'BDCB'
     const m = str1.length
@@ -3405,7 +3404,7 @@ Space Complexity: O(n×n) for the board
 
 Sudoku solving is a classic example of constraint satisfaction via backtracking. The 4×4 variant provides a clear, compact visualization of the algorithm.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const board: (number | string)[][] = [
       [0, 0, 3, 0],
       [3, 0, 0, 2],
@@ -3632,7 +3631,7 @@ Space Complexity: O(rows × cols)
 
 BFS guarantees the shortest path in an unweighted grid. Used in robotics, game AI, and navigation systems.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const maze = [
       [0, 0, 1, 0, 0, 0],
       [0, 1, 0, 0, 1, 0],
@@ -3825,7 +3824,7 @@ Space Complexity: O(n) — recursive call stack
 
 The minimum number of moves for n disks is 2^n - 1. For 3 disks, that's 7 moves.`,
 
-  generateSteps() {
+  generateSteps(locale = 'en') {
     const numDisks = 3
     const pegs: number[][] = [[3, 2, 1], [], []]
     const steps: Step[] = []

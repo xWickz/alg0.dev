@@ -74,7 +74,7 @@ export interface Algorithm {
   description: string
   code: string
   visualization: VisualizationType
-  generateSteps: () => Step[]
+  generateSteps: (locale?: string) => Step[]
 }
 
 export interface Category {

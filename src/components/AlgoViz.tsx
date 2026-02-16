@@ -54,7 +54,7 @@ export default function AlgoViz({ locale = 'en' }: AlgoVizProps) {
   const selectAlgorithm = useCallback((algo: Algorithm) => {
     setIsPlaying(false)
     setSelectedAlgorithm(algo)
-    const newSteps = algo.generateSteps()
+    const newSteps = algo.generateSteps(locale)
     setSteps(newSteps)
     setCurrentStep(0)
     setActiveTab('code')
