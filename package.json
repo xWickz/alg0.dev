@@ -1,14 +1,29 @@
 {
-  "name": "algoviz.dev",
+  "name": "alg0.dev",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "format": "prettier . --write"
   },
   "dependencies": {
-    "astro": "^5.17.1"
+    "@astrojs/react": "4.4.2",
+    "@monaco-editor/react": "4.7.0",
+    "@tailwindcss/vite": "4.1.18",
+    "astro": "5.17.1",
+    "geist": "1.7.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "tailwindcss": "4.1.18"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.13",
+    "@types/react-dom": "19.2.3",
+    "eslint": "10.0.0",
+    "neostandard": "0.12.2",
+    "prettier": "3.8.1"
   }
 }
