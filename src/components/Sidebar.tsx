@@ -198,7 +198,7 @@ export default function Sidebar({ categories, selectedId, onSelect, locale = 'en
                 </div>
                 <span
                   className="text-[10px] font-normal text-neutral-600 bg-white/[0.04] px-1.5 py-0.5 rounded-full tabular-nums"
-                  aria-label={`${category.algorithms.length} algorithms`}
+                  aria-label={t.algorithmCountLabel.replace('{count}', String(category.algorithms.length))}
                 >
                   {category.algorithms.length}
                 </span>
