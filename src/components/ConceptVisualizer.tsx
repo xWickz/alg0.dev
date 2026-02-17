@@ -6,7 +6,10 @@ import type {
   LinkedListState,
   HashTableState,
   BinaryTreeState,
-  TreeNodeData,
+  TwoPointersState,
+  SlidingWindowState,
+  MemoTableState,
+  CoinChangeState,
 } from '@lib/types'
 
 interface ConceptVisualizerProps {
@@ -30,6 +33,14 @@ export default function ConceptVisualizer({ step }: ConceptVisualizerProps) {
       return <HashTableViz state={concept} />
     case 'binaryTree':
       return <BinaryTreeViz state={concept} />
+    case 'twoPointers':
+      return <TwoPointersViz state={concept} />
+    case 'slidingWindow':
+      return <SlidingWindowViz state={concept} />
+    case 'memoTable':
+      return <MemoTableViz state={concept} />
+    case 'coinChange':
+      return <CoinChangeViz state={concept} />
     default:
       return null
   }
@@ -147,7 +158,7 @@ function BigOChart({ state }: { state: BigOState }) {
           fontFamily="monospace"
           transform={`rotate(-90, 12, ${PAD.top + chartH / 2})`}
         >
-          operations
+          {state.yLabel ?? 'operations'}
         </text>
 
         {/* Curves */}
@@ -827,6 +838,326 @@ function BinaryTreeViz({ state }: { state: BinaryTreeState }) {
                 </div>
               )
             })}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  TWO POINTERS — Array with left/right pointer arrows
+// ════════════════════════════════════════════════════════════════
+
+const TP_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  default: { bg: 'rgba(255,255,255,0.04)', border: 'rgba(255,255,255,0.1)', text: '#888' },
+  left: { bg: 'rgba(96,165,250,0.15)', border: 'rgba(96,165,250,0.4)', text: '#60a5fa' },
+  right: { bg: 'rgba(192,132,252,0.15)', border: 'rgba(192,132,252,0.4)', text: '#c084fc' },
+  found: { bg: 'rgba(74,222,128,0.18)', border: 'rgba(74,222,128,0.5)', text: '#4ade80' },
+  checked: { bg: 'rgba(255,255,255,0.06)', border: 'rgba(255,255,255,0.12)', text: '#555' },
+}
+
+function TwoPointersViz({ state }: { state: TwoPointersState }) {
+  const { array, left, right, highlights, sum, target, operation } = state
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Two Pointers</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center gap-1">
+        {/* Pointer labels above */}
+        <div className="flex gap-0">
+          {array.map((_, i) => {
+            const isLeft = i === left
+            const isRight = i === right
+            return (
+              <div key={`lbl-${i}`} className="w-14 flex justify-center">
+                {isLeft && <span className="text-[10px] font-mono font-bold text-blue-400">L ↓</span>}
+                {isRight && !isLeft && <span className="text-[10px] font-mono font-bold text-purple-400">R ↓</span>}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Array cells */}
+        <div className="flex gap-1">
+          {array.map((val, i) => {
+            const hl = highlights[i] ?? 'default'
+            const colors = TP_COLORS[hl] ?? TP_COLORS.default
+            return (
+              <div
+                key={i}
+                className="w-13 h-13 rounded-lg border flex items-center justify-center font-mono text-base font-bold transition-all duration-300"
+                style={{
+                  backgroundColor: colors.bg,
+                  borderColor: colors.border,
+                  color: colors.text,
+                  boxShadow: hl !== 'default' && hl !== 'checked' ? `0 0 12px ${colors.border}` : 'none',
+                }}
+              >
+                {val}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Index row */}
+        <div className="flex gap-1">
+          {array.map((_, i) => (
+            <div key={`idx-${i}`} className="w-13 text-center text-[9px] font-mono text-neutral-600">{i}</div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sum display */}
+      {sum != null && target != null && (
+        <div className="font-mono text-sm text-neutral-400">
+          arr[{left}] + arr[{right}] = <span className="text-white">{array[left]}</span> + <span className="text-white">{array[right]}</span> = <span className={sum === target ? 'text-green-400 font-bold' : 'text-amber-300'}>{sum}</span>
+          {sum === target ? ' ✓' : sum < target ? ` < ${target} → move L →` : ` > ${target} → ← move R`}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  SLIDING WINDOW — String with window bracket
+// ════════════════════════════════════════════════════════════════
+
+const SW_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  outside: { bg: 'rgba(255,255,255,0.03)', border: 'rgba(255,255,255,0.08)', text: '#555' },
+  inWindow: { bg: 'rgba(96,165,250,0.12)', border: 'rgba(96,165,250,0.3)', text: '#60a5fa' },
+  current: { bg: 'rgba(74,222,128,0.15)', border: 'rgba(74,222,128,0.4)', text: '#4ade80' },
+  duplicate: { bg: 'rgba(248,113,113,0.15)', border: 'rgba(248,113,113,0.4)', text: '#f87171' },
+}
+
+function SlidingWindowViz({ state }: { state: SlidingWindowState }) {
+  const { chars, windowStart, windowEnd, charStates, best, operation } = state
+
+  const windowStr = windowEnd >= windowStart ? chars.slice(windowStart, windowEnd + 1).join('') : ''
+  const bestStr = best ? chars.slice(best.start, best.end + 1).join('') : ''
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Sliding Window</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      <div className="flex flex-col items-center gap-1">
+        {/* Character cells */}
+        <div className="flex gap-0.5">
+          {chars.map((ch, i) => {
+            const st = charStates[i] ?? 'outside'
+            const colors = SW_COLORS[st] ?? SW_COLORS.outside
+            const isWindowEdge = i === windowStart || i === windowEnd
+            return (
+              <div
+                key={i}
+                className="w-10 h-12 rounded-md border flex items-center justify-center font-mono text-lg font-bold transition-all duration-300"
+                style={{
+                  backgroundColor: colors.bg,
+                  borderColor: colors.border,
+                  color: colors.text,
+                  boxShadow: st !== 'outside' ? `0 0 10px ${colors.border}` : 'none',
+                  borderWidth: isWindowEdge && st !== 'outside' ? '2px' : '1px',
+                }}
+              >
+                {ch}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Index row */}
+        <div className="flex gap-0.5">
+          {chars.map((_, i) => (
+            <div key={`idx-${i}`} className="w-10 text-center text-[9px] font-mono text-neutral-600">{i}</div>
+          ))}
+        </div>
+
+        {/* Window bracket */}
+        {windowEnd >= windowStart && windowEnd >= 0 && (
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] font-mono text-blue-400">window [{windowStart}..{windowEnd}]</span>
+            <span className="font-mono text-sm text-blue-300 font-bold">"{windowStr}"</span>
+            <span className="text-[10px] font-mono text-neutral-500">len={windowStr.length}</span>
+          </div>
+        )}
+      </div>
+
+      {/* Best so far */}
+      {bestStr && (
+        <div className="font-mono text-xs text-neutral-400">
+          best = "<span className="text-amber-300 font-bold">{bestStr}</span>" (length {bestStr.length})
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  MEMO TABLE — Fibonacci memoization grid
+// ════════════════════════════════════════════════════════════════
+
+const MEMO_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  empty: { bg: 'rgba(255,255,255,0.02)', border: 'rgba(255,255,255,0.06)', text: '#444' },
+  computing: { bg: 'rgba(251,146,60,0.15)', border: 'rgba(251,146,60,0.4)', text: '#fb923c' },
+  cached: { bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.25)', text: '#60a5fa' },
+  hit: { bg: 'rgba(74,222,128,0.18)', border: 'rgba(74,222,128,0.5)', text: '#4ade80' },
+}
+
+function MemoTableViz({ state }: { state: MemoTableState }) {
+  const { entries, currentCall, operation } = state
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Memoization</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      {currentCall && (
+        <div className="font-mono text-sm text-neutral-300">{currentCall}</div>
+      )}
+
+      {/* Memo table grid */}
+      <div className="flex flex-col items-center gap-1">
+        <div className="flex gap-1">
+          {entries.map((entry, i) => {
+            const colors = MEMO_COLORS[entry.state] ?? MEMO_COLORS.empty
+            return (
+              <div key={i} className="flex flex-col items-center gap-0.5">
+                <div className="text-[9px] font-mono text-neutral-500">f({entry.key})</div>
+                <div
+                  className="w-11 h-11 rounded-lg border flex items-center justify-center font-mono text-sm font-bold transition-all duration-300"
+                  style={{
+                    backgroundColor: colors.bg,
+                    borderColor: colors.border,
+                    color: colors.text,
+                    boxShadow: entry.state !== 'empty' ? `0 0 10px ${colors.border}` : 'none',
+                  }}
+                >
+                  {entry.value != null ? entry.value : '—'}
+                </div>
+                <div className="text-[8px] font-mono transition-colors duration-300" style={{ color: colors.text }}>
+                  {entry.state === 'hit' ? '↑ HIT' : entry.state === 'computing' ? '...' : entry.state === 'cached' ? '✓' : ''}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div className="flex gap-4 text-[10px] font-mono">
+        <span className="text-orange-400">● computing</span>
+        <span className="text-blue-400">● cached</span>
+        <span className="text-green-400">● cache hit</span>
+      </div>
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  COIN CHANGE — Greedy vs DP comparison
+// ════════════════════════════════════════════════════════════════
+
+function CoinChangeViz({ state }: { state: CoinChangeState }) {
+  const { coins, target, selected, remaining, approach, greedyResult, dpResult, operation } = state
+
+  const approachLabel = approach === 'greedy' ? 'Greedy' : approach === 'dp' ? 'Dynamic Programming' : 'Comparison'
+  const approachColor = approach === 'greedy' ? '#fb923c' : approach === 'dp' ? '#60a5fa' : '#c084fc'
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Greedy vs DP</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      {/* Approach label */}
+      <div className="font-mono text-xs font-bold px-3 py-1 rounded" style={{ color: approachColor, backgroundColor: `${approachColor}15`, border: `1px solid ${approachColor}30` }}>
+        {approachLabel}
+      </div>
+
+      {/* Target */}
+      <div className="font-mono text-sm text-neutral-400">
+        target = <span className="text-white font-bold text-lg">{target}</span>
+        {remaining > 0 && remaining < target && <span className="text-neutral-500 ml-2">remaining: <span className="text-amber-300">{remaining}</span></span>}
+      </div>
+
+      {/* Available coins */}
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] font-mono text-neutral-500 uppercase">coins:</span>
+        <div className="flex gap-1.5">
+          {coins.map((c, i) => (
+            <div key={i} className="w-10 h-10 rounded-full border border-white/15 bg-white/5 flex items-center justify-center font-mono text-sm font-bold text-neutral-400">
+              {c}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Selected coins */}
+      {selected.length > 0 && (
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-mono text-neutral-500 uppercase">picked:</span>
+          <div className="flex gap-1.5">
+            {selected.map((c, i) => (
+              <div
+                key={i}
+                className="w-10 h-10 rounded-full border flex items-center justify-center font-mono text-sm font-bold transition-all duration-300"
+                style={{
+                  backgroundColor: `${approachColor}18`,
+                  borderColor: `${approachColor}50`,
+                  color: approachColor,
+                  boxShadow: `0 0 12px ${approachColor}30`,
+                }}
+              >
+                {c}
+              </div>
+            ))}
+          </div>
+          <span className="text-[10px] font-mono text-neutral-500">= {selected.reduce((a, b) => a + b, 0)} ({selected.length} coins)</span>
+        </div>
+      )}
+
+      {/* Comparison */}
+      {approach === 'compare' && greedyResult && dpResult && (
+        <div className="flex gap-6 mt-2">
+          <div className="flex flex-col items-center gap-1 px-4 py-3 rounded-lg border border-orange-400/20 bg-orange-400/5">
+            <span className="text-[10px] font-mono text-orange-400 uppercase font-bold">Greedy</span>
+            <div className="flex gap-1">
+              {greedyResult.map((c, i) => (
+                <div key={i} className="w-8 h-8 rounded-full bg-orange-400/15 border border-orange-400/30 flex items-center justify-center font-mono text-xs font-bold text-orange-400">{c}</div>
+              ))}
+            </div>
+            <span className="font-mono text-xs text-orange-300">{greedyResult.length} coins</span>
+          </div>
+          <div className="flex flex-col items-center gap-1 px-4 py-3 rounded-lg border border-blue-400/20 bg-blue-400/5">
+            <span className="text-[10px] font-mono text-blue-400 uppercase font-bold">DP (optimal)</span>
+            <div className="flex gap-1">
+              {dpResult.map((c, i) => (
+                <div key={i} className="w-8 h-8 rounded-full bg-blue-400/15 border border-blue-400/30 flex items-center justify-center font-mono text-xs font-bold text-blue-400">{c}</div>
+              ))}
+            </div>
+            <span className="font-mono text-xs text-blue-300">{dpResult.length} coins ✓</span>
           </div>
         </div>
       )}

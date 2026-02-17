@@ -69,6 +69,7 @@ export interface BigOState {
   type: 'bigO'
   curves: BigOCurve[]
   maxN: number
+  yLabel?: string
 }
 
 export interface CallStackFrame {
@@ -136,6 +137,48 @@ export interface BinaryTreeState {
   heapType?: 'min' | 'max'
 }
 
+// ── Algorithm technique visualization types ──
+
+export interface TwoPointersState {
+  type: 'twoPointers'
+  array: number[]
+  left: number
+  right: number
+  highlights: Record<number, 'default' | 'left' | 'right' | 'found' | 'checked'>
+  sum?: number
+  target?: number
+  operation?: string
+}
+
+export interface SlidingWindowState {
+  type: 'slidingWindow'
+  chars: string[]
+  windowStart: number
+  windowEnd: number
+  charStates: Record<number, 'outside' | 'inWindow' | 'current' | 'duplicate'>
+  best?: { start: number; end: number }
+  operation?: string
+}
+
+export interface MemoTableState {
+  type: 'memoTable'
+  entries: { key: number; value: number | null; state: 'empty' | 'computing' | 'cached' | 'hit' }[]
+  currentCall?: string
+  operation?: string
+}
+
+export interface CoinChangeState {
+  type: 'coinChange'
+  coins: number[]
+  target: number
+  selected: number[]
+  remaining: number
+  approach: 'greedy' | 'dp' | 'compare'
+  greedyResult?: number[]
+  dpResult?: number[]
+  operation?: string
+}
+
 export type ConceptState =
   | BigOState
   | CallStackState
@@ -143,6 +186,10 @@ export type ConceptState =
   | LinkedListState
   | HashTableState
   | BinaryTreeState
+  | TwoPointersState
+  | SlidingWindowState
+  | MemoTableState
+  | CoinChangeState
 
 export interface Step {
   array?: number[]

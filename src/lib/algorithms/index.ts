@@ -3,6 +3,11 @@ import type { Algorithm, Category } from '@lib/types'
 import {
   bigONotation,
   recursion,
+  twoPointers,
+  slidingWindow,
+  spaceComplexity,
+  memoization,
+  greedyVsDp,
 } from '@lib/algorithms/concepts'
 
 import {
@@ -59,6 +64,11 @@ export const algorithms: Algorithm[] = [
   // Concepts
   bigONotation,
   recursion,
+  twoPointers,
+  slidingWindow,
+  spaceComplexity,
+  memoization,
+  greedyVsDp,
   // Data Structures
   stack,
   queue,

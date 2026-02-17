@@ -1,4 +1,4 @@
-import type { Algorithm, Step, BigOCurve } from '@lib/types'
+import type { Algorithm, Step, BigOCurve, MemoTableState } from '@lib/types'
 import { d } from '@lib/algorithms/shared'
 
 // ============================================================
@@ -772,6 +772,693 @@ Space Complexity: O(n) for n elements`,
       ),
       codeLine: 12,
       variables: { operation: 'front()', front: 30, size: 2, complexity: 'O(1)' },
+    })
+
+    return steps
+  },
+}
+
+// ============================================================
+// TWO POINTERS
+// ============================================================
+
+export const twoPointers: Algorithm = {
+  id: 'two-pointers',
+  name: 'Two Pointers',
+  category: 'Concepts',
+  visualization: 'concept',
+  code: `function twoSumSorted(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+
+  while (left < right) {
+    const sum = arr[left] + arr[right];
+    if (sum === target) {
+      return [left, right];
+    } else if (sum < target) {
+      left++;   // need bigger sum
+    } else {
+      right--;  // need smaller sum
+    }
+  }
+  return null; // no pair found
+}`,
+  description: `Two Pointers
+
+Two Pointers is a technique where two indices move through a data structure (usually an array) to solve problems efficiently.
+
+Common patterns:
+  - Left & Right: start from both ends, move inward
+  - Slow & Fast: both start from beginning at different speeds
+
+This example finds two numbers in a sorted array that add up to a target.
+
+Time Complexity: O(n) — each pointer moves at most n times
+Space Complexity: O(1) — only two variables
+
+Classic problems:
+  - Two Sum (sorted array)
+  - Container with most water
+  - Remove duplicates in-place
+  - Palindrome checking
+  - Linked list cycle detection (slow/fast)`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+    const arr = [1, 3, 5, 7, 9, 12, 15]
+    const target = 14
+
+    const hl = (l: number, r: number, extra: Record<number, string> = {}) => {
+      const h: Record<number, string> = {}
+      for (let i = 0; i < arr.length; i++) h[i] = 'default'
+      h[l] = 'left'
+      h[r] = 'right'
+      Object.assign(h, extra)
+      return h as any
+    }
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 0, right: 6, highlights: hl(0, 6), target },
+      description: d(locale,
+        `Find two numbers that sum to ${target} in a sorted array. Left starts at index 0, right at the end.`,
+        `Encontrar dos números que sumen ${target} en un arreglo ordenado. Left empieza en índice 0, right al final.`,
+      ),
+      codeLine: 2,
+      variables: { target, left: 0, right: 6 },
+    })
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 0, right: 6, highlights: hl(0, 6), sum: 16, target },
+      description: d(locale,
+        '1 + 15 = 16 > 14. Sum is too big → move right pointer left to try a smaller value.',
+        '1 + 15 = 16 > 14. La suma es muy grande → mover right a la izquierda para un valor menor.',
+      ),
+      codeLine: 11,
+      variables: { 'arr[L]': 1, 'arr[R]': 15, sum: 16, vs: '> 14' },
+    })
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 0, right: 5, highlights: hl(0, 5, { 6: 'checked' }), sum: 13, target },
+      description: d(locale,
+        '1 + 12 = 13 < 14. Sum is too small → move left pointer right to try a bigger value.',
+        '1 + 12 = 13 < 14. La suma es muy pequeña → mover left a la derecha para un valor mayor.',
+      ),
+      codeLine: 9,
+      variables: { 'arr[L]': 1, 'arr[R]': 12, sum: 13, vs: '< 14' },
+    })
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 1, right: 5, highlights: hl(1, 5, { 0: 'checked', 6: 'checked' }), sum: 15, target },
+      description: d(locale,
+        '3 + 12 = 15 > 14. Still too big → move right pointer left.',
+        '3 + 12 = 15 > 14. Aún muy grande → mover right a la izquierda.',
+      ),
+      codeLine: 11,
+      variables: { 'arr[L]': 3, 'arr[R]': 12, sum: 15, vs: '> 14' },
+    })
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 1, right: 4, highlights: hl(1, 4, { 0: 'checked', 5: 'checked', 6: 'checked' }), sum: 12, target },
+      description: d(locale,
+        '3 + 9 = 12 < 14. Too small → move left pointer right.',
+        '3 + 9 = 12 < 14. Muy pequeña → mover left a la derecha.',
+      ),
+      codeLine: 9,
+      variables: { 'arr[L]': 3, 'arr[R]': 9, sum: 12, vs: '< 14' },
+    })
+
+    steps.push({
+      concept: { type: 'twoPointers', array: arr, left: 2, right: 4, highlights: { ...hl(2, 4, { 0: 'checked', 1: 'checked', 5: 'checked', 6: 'checked' }), 2: 'found', 4: 'found' } as any, sum: 14, target },
+      description: d(locale,
+        '5 + 9 = 14 ✓ Found! Only 5 checks instead of 21 brute-force pairs. O(n) vs O(n²).',
+        '5 + 9 = 14 ✓ ¡Encontrado! Solo 5 comprobaciones en lugar de 21 pares por fuerza bruta. O(n) vs O(n²).',
+      ),
+      codeLine: 7,
+      variables: { 'arr[L]': 5, 'arr[R]': 9, sum: 14, result: '[2, 4]' },
+    })
+
+    return steps
+  },
+}
+
+// ============================================================
+// SLIDING WINDOW
+// ============================================================
+
+export const slidingWindow: Algorithm = {
+  id: 'sliding-window',
+  name: 'Sliding Window',
+  category: 'Concepts',
+  visualization: 'concept',
+  code: `function longestUniqueSubstring(s) {
+  const seen = new Set();
+  let start = 0, best = 0, bestStart = 0;
+
+  for (let end = 0; end < s.length; end++) {
+    while (seen.has(s[end])) {
+      seen.delete(s[start]);
+      start++;
+    }
+    seen.add(s[end]);
+    if (end - start + 1 > best) {
+      best = end - start + 1;
+      bestStart = start;
+    }
+  }
+  return s.slice(bestStart, bestStart + best);
+}`,
+  description: `Sliding Window
+
+Sliding Window maintains a dynamic range (window) over a sequence, expanding and contracting to solve substring/subarray problems efficiently.
+
+How it works:
+1. Expand the window by moving the right pointer
+2. If a condition is violated, shrink from the left
+3. Track the best result seen so far
+
+This example finds the longest substring without repeating characters.
+
+Time Complexity: O(n) — each character is visited at most twice
+Space Complexity: O(min(n, alphabet))
+
+Classic problems:
+  - Longest substring without repeating chars
+  - Minimum window substring
+  - Maximum sum subarray of size k
+  - Longest repeating character replacement`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+    const str = 'abcbad'
+    const chars = str.split('')
+
+    type CS = Record<number, 'outside' | 'inWindow' | 'current' | 'duplicate'>
+
+    const mkStates = (start: number, end: number, extra: Record<number, string> = {}): CS => {
+      const s: CS = {}
+      for (let i = 0; i < chars.length; i++) {
+        if (i >= start && i <= end) s[i] = 'inWindow'
+        else s[i] = 'outside'
+      }
+      if (end >= 0 && end < chars.length) s[end] = 'current'
+      Object.assign(s, extra)
+      return s
+    }
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 0, windowEnd: -1, charStates: mkStates(0, -1) },
+      description: d(locale,
+        `Find the longest substring without repeating characters in "${str}".`,
+        `Encontrar la subcadena más larga sin caracteres repetidos en "${str}".`,
+      ),
+      codeLine: 1,
+      variables: { string: str, best: 0 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 0, windowEnd: 0, charStates: mkStates(0, 0), best: { start: 0, end: 0 }, operation: 'expand → "a"' },
+      description: d(locale, '"a" — unique. Window = "a", best = 1.', '"a" — único. Ventana = "a", mejor = 1.'),
+      codeLine: 5,
+      variables: { window: 'a', best: 1 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 0, windowEnd: 1, charStates: mkStates(0, 1), best: { start: 0, end: 1 }, operation: 'expand → "ab"' },
+      description: d(locale, '"b" is new. Window = "ab", best = 2.', '"b" es nuevo. Ventana = "ab", mejor = 2.'),
+      codeLine: 9,
+      variables: { window: 'ab', best: 2 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 0, windowEnd: 2, charStates: mkStates(0, 2), best: { start: 0, end: 2 }, operation: 'expand → "abc"' },
+      description: d(locale, '"c" is new. Window = "abc", best = 3!', '"c" es nuevo. Ventana = "abc", ¡mejor = 3!'),
+      codeLine: 10,
+      variables: { window: 'abc', best: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 0, windowEnd: 3, charStates: { ...mkStates(0, 3), 1: 'duplicate', 3: 'duplicate' } as CS, best: { start: 0, end: 2 }, operation: '"b" repeated!' },
+      description: d(locale,
+        '"b" at index 3 is already in window (index 1)! Must shrink from the left until "b" is removed.',
+        '"b" en índice 3 ya está en la ventana (índice 1)! Debemos encoger desde la izquierda hasta eliminar "b".',
+      ),
+      codeLine: 6,
+      variables: { duplicate: 'b', 'first at': 1, 'new at': 3 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 2, windowEnd: 3, charStates: mkStates(2, 3), best: { start: 0, end: 2 }, operation: 'shrink → "cb"' },
+      description: d(locale,
+        'Shrink: removed "a" and "b" from left. Window = "cb". best still 3.',
+        'Encoger: eliminados "a" y "b" por la izquierda. Ventana = "cb". mejor sigue siendo 3.',
+      ),
+      codeLine: 8,
+      variables: { window: 'cb', best: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 2, windowEnd: 4, charStates: mkStates(2, 4), best: { start: 0, end: 2 }, operation: 'expand → "cba"' },
+      description: d(locale, '"a" is new. Window = "cba", length 3 = best.', '"a" es nuevo. Ventana = "cba", longitud 3 = mejor.'),
+      codeLine: 9,
+      variables: { window: 'cba', best: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'slidingWindow', chars, windowStart: 2, windowEnd: 5, charStates: mkStates(2, 5), best: { start: 2, end: 5 }, operation: 'expand → "cbad" ★ new best!' },
+      description: d(locale,
+        '"d" is new. Window = "cbad", length 4 — new best! Done. O(n) time, just one pass.',
+        '"d" es nuevo. Ventana = "cbad", longitud 4 — ¡nuevo mejor! Fin. Tiempo O(n), una sola pasada.',
+      ),
+      codeLine: 10,
+      variables: { window: 'cbad', best: 4, complexity: 'O(n)' },
+    })
+
+    return steps
+  },
+}
+
+// ============================================================
+// SPACE COMPLEXITY (reuses BigO chart)
+// ============================================================
+
+const SPACE_CURVES: Omit<BigOCurve, 'visible' | 'highlighted'>[] = [
+  { name: 'O(1)', color: '#34d399' },
+  { name: 'O(log n)', color: '#22d3ee' },
+  { name: 'O(n)', color: '#fb923c' },
+  { name: 'O(n²)', color: '#f87171' },
+]
+
+function makeSpaceCurves(visible: string[], highlighted?: string): BigOCurve[] {
+  return SPACE_CURVES.map((c) => ({
+    ...c,
+    visible: visible.includes(c.name),
+    highlighted: c.name === highlighted,
+  }))
+}
+
+export const spaceComplexity: Algorithm = {
+  id: 'space-complexity',
+  name: 'Space Complexity',
+  category: 'Concepts',
+  visualization: 'concept',
+  code: `// O(1) space — fixed variables
+function swap(arr, i, j) {
+  const temp = arr[i];
+  arr[i] = arr[j];
+  arr[j] = temp;
+}
+
+// O(log n) space — recursive call stack
+function binarySearch(arr, target, lo, hi) {
+  if (lo > hi) return -1;
+  const mid = Math.floor((lo + hi) / 2);
+  if (arr[mid] === target) return mid;
+  if (arr[mid] < target)
+    return binarySearch(arr, target, mid + 1, hi);
+  return binarySearch(arr, target, lo, mid - 1);
+}
+
+// O(n) space — copy of input
+function reversed(arr) {
+  const copy = [...arr]; // allocates n elements
+  return copy.reverse();
+}
+
+// O(n²) space — 2D matrix
+function createMatrix(n) {
+  return Array.from({ length: n },
+    () => new Array(n).fill(0));
+}`,
+  description: `Space Complexity
+
+Space Complexity measures the amount of memory an algorithm uses relative to the input size. Like time complexity, we use Big O notation.
+
+Common space complexities:
+  O(1)     — Constant: fixed number of variables
+  O(log n) — Logarithmic: recursive call stack depth
+  O(n)     — Linear: one copy of the input
+  O(n²)    — Quadratic: 2D matrix of input size
+
+Important distinction:
+  - Auxiliary space: extra memory beyond the input
+  - Total space: input + auxiliary
+
+Examples:
+  O(1): in-place sorting (Bubble Sort), variable swaps
+  O(log n): recursive binary search (call stack)
+  O(n): Merge Sort (temporary arrays), hash tables
+  O(n²): DP tables, adjacency matrices`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+    const all = SPACE_CURVES.map((c) => c.name)
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves([]), maxN: 10, yLabel: 'memory' },
+      description: d(locale,
+        'Space complexity measures memory usage as input grows. The chart shows how each complexity scales.',
+        'La complejidad espacial mide el uso de memoria conforme crece la entrada. El gráfico muestra cómo escala cada complejidad.',
+      ),
+      codeLine: 1,
+      variables: { metric: 'memory' },
+    })
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves(['O(1)'], 'O(1)'), maxN: 10, yLabel: 'memory' },
+      description: d(locale,
+        'O(1) space: constant memory. Just a few variables regardless of input size. Example: swapping two elements.',
+        'O(1) espacio: memoria constante. Solo unas variables sin importar el tamaño. Ejemplo: intercambiar dos elementos.',
+      ),
+      codeLine: 2,
+      variables: { complexity: 'O(1)', example: 'swap, in-place sort' },
+    })
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves(['O(1)', 'O(log n)'], 'O(log n)'), maxN: 10, yLabel: 'memory' },
+      description: d(locale,
+        'O(log n) space: recursive call stack. Each level adds a frame; binary search halves → log n depth.',
+        'O(log n) espacio: pila de llamadas recursivas. Cada nivel añade un frame; búsqueda binaria divide → profundidad log n.',
+      ),
+      codeLine: 9,
+      variables: { complexity: 'O(log n)', example: 'recursive binary search' },
+    })
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves(['O(1)', 'O(log n)', 'O(n)'], 'O(n)'), maxN: 10, yLabel: 'memory' },
+      description: d(locale,
+        'O(n) space: a copy of the input. Arrays, hash maps, or Merge Sort\'s temp arrays all use linear space.',
+        'O(n) espacio: una copia de la entrada. Arrays, hash maps, o los arrays temporales de Merge Sort usan espacio lineal.',
+      ),
+      codeLine: 19,
+      variables: { complexity: 'O(n)', example: 'array copy, hash map' },
+    })
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves(all, 'O(n²)'), maxN: 10, yLabel: 'memory' },
+      description: d(locale,
+        'O(n²) space: a 2D matrix. DP tables and adjacency matrices use quadratic memory.',
+        'O(n²) espacio: una matriz 2D. Tablas de DP y matrices de adyacencia usan memoria cuadrática.',
+      ),
+      codeLine: 26,
+      variables: { complexity: 'O(n²)', example: 'DP table, adjacency matrix' },
+    })
+
+    steps.push({
+      concept: { type: 'bigO', curves: makeSpaceCurves(all), maxN: 50, yLabel: 'memory' },
+      description: d(locale,
+        'At n=50: O(1)=1, O(n)=50, O(n²)=2500 memory units. Choosing space-efficient algorithms matters!',
+        'Con n=50: O(1)=1, O(n)=50, O(n²)=2500 unidades de memoria. ¡Elegir algoritmos eficientes en espacio importa!',
+      ),
+      codeLine: 1,
+      variables: { n: 50, 'O(1)': 1, 'O(n)': 50, 'O(n²)': 2500 },
+    })
+
+    return steps
+  },
+}
+
+// ============================================================
+// MEMOIZATION
+// ============================================================
+
+export const memoization: Algorithm = {
+  id: 'memoization',
+  name: 'Memoization',
+  category: 'Concepts',
+  visualization: 'concept',
+  code: `// Without memoization — O(2^n) time!
+function fib(n) {
+  if (n <= 1) return n;
+  return fib(n - 1) + fib(n - 2);
+}
+
+// With memoization — O(n) time!
+function fibMemo(n, memo = {}) {
+  if (n in memo) return memo[n]; // cache hit!
+  if (n <= 1) return n;
+  memo[n] = fibMemo(n - 1, memo)
+           + fibMemo(n - 2, memo);
+  return memo[n];
+}
+
+// fibMemo(7):
+// Only computes each value ONCE
+// Then reuses cached results`,
+  description: `Memoization
+
+Memoization is an optimization technique that stores the results of expensive function calls and returns the cached result when the same inputs occur again.
+
+Without memoization (Fibonacci):
+  fib(5) calls fib(4) + fib(3)
+  fib(4) calls fib(3) + fib(2)  ← fib(3) computed AGAIN!
+  Exponential: O(2^n) time
+
+With memoization:
+  Each value is computed ONCE and cached
+  Subsequent calls with the same input return instantly
+  Linear: O(n) time, O(n) space
+
+Key insight: trade space for time
+  - Store results in a dictionary/array
+  - Before computing, check if result exists
+  - Dramatic speedup for overlapping subproblems
+
+This is the foundation of Dynamic Programming (bottom-up).`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+
+    const mkEntries = (upTo: number, computing?: number, hits?: number[]): MemoTableState['entries'] => {
+      const fibs = [0, 1, 1, 2, 3, 5, 8, 13]
+      return Array.from({ length: 8 }, (_, i) => ({
+        key: i,
+        value: i <= upTo ? fibs[i] : null,
+        state: (computing === i ? 'computing' : hits?.includes(i) ? 'hit' : i <= upTo ? 'cached' : 'empty') as any,
+      }))
+    }
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(-1), operation: 'fibonacci with memoization' },
+      description: d(locale,
+        'Computing fib(7) with memoization. The table stores results. Without memo: 41 calls. With memo: just 8!',
+        'Calculando fib(7) con memoización. La tabla almacena resultados. Sin memo: 41 llamadas. ¡Con memo: solo 8!',
+      ),
+      codeLine: 8,
+      variables: { 'without memo': '41 calls (2^n)', 'with memo': '8 calls (n)' },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(0, 0), currentCall: 'fib(0) = 0 (base case)', operation: 'base cases' },
+      description: d(locale, 'fib(0) = 0. Base case, store in cache.', 'fib(0) = 0. Caso base, guardar en caché.'),
+      codeLine: 10,
+      variables: { n: 0, result: 0 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(1, 1), currentCall: 'fib(1) = 1 (base case)', operation: 'base cases' },
+      description: d(locale, 'fib(1) = 1. Base case, store in cache.', 'fib(1) = 1. Caso base, guardar en caché.'),
+      codeLine: 10,
+      variables: { n: 1, result: 1 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(2, 2, [0, 1]), currentCall: 'fib(2) = fib(1) + fib(0) = 1 + 0 = 1' },
+      description: d(locale,
+        'fib(2): needs fib(1) and fib(0). Both cached → HIT! No recomputation.',
+        'fib(2): necesita fib(1) y fib(0). ¡Ambos en caché → HIT! Sin recalcular.',
+      ),
+      codeLine: 11,
+      variables: { n: 2, 'fib(1)': '1 ✓ hit', 'fib(0)': '0 ✓ hit', result: 1 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(3, 3, [2, 1]), currentCall: 'fib(3) = fib(2) + fib(1) = 1 + 1 = 2' },
+      description: d(locale,
+        'fib(3): fib(2)=1 ✓ cached, fib(1)=1 ✓ cached. Result: 2.',
+        'fib(3): fib(2)=1 ✓ en caché, fib(1)=1 ✓ en caché. Resultado: 2.',
+      ),
+      codeLine: 11,
+      variables: { n: 3, result: 2 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(5, 5, [4, 3]), currentCall: 'fib(5) = fib(4) + fib(3) = 3 + 2 = 5' },
+      description: d(locale,
+        'fib(4)=3 and fib(5)=5. Each value computed exactly ONCE then cached forever.',
+        'fib(4)=3 y fib(5)=5. Cada valor se computa exactamente UNA VEZ y se cachea para siempre.',
+      ),
+      codeLine: 12,
+      variables: { n: 5, result: 5 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(6, 6, [5, 4]), currentCall: 'fib(6) = fib(5) + fib(4) = 5 + 3 = 8' },
+      description: d(locale, 'fib(6) = 8. Both sub-results are instant cache hits.', 'fib(6) = 8. Ambos sub-resultados son hits de caché instantáneos.'),
+      codeLine: 11,
+      variables: { n: 6, result: 8 },
+    })
+
+    steps.push({
+      concept: { type: 'memoTable', entries: mkEntries(7, 7, [6, 5]), currentCall: 'fib(7) = fib(6) + fib(5) = 8 + 5 = 13' },
+      description: d(locale,
+        'fib(7) = 13. Done! O(n) with memo vs O(2^n) without. 8 calls vs 41!',
+        'fib(7) = 13. ¡Listo! O(n) con memo vs O(2^n) sin ella. ¡8 llamadas vs 41!',
+      ),
+      codeLine: 11,
+      variables: { result: 13, 'with memo': 'O(n)', 'without': 'O(2^n)' },
+    })
+
+    return steps
+  },
+}
+
+// ============================================================
+// GREEDY VS DYNAMIC PROGRAMMING
+// ============================================================
+
+export const greedyVsDp: Algorithm = {
+  id: 'greedy-vs-dp',
+  name: 'Greedy vs DP',
+  category: 'Concepts',
+  visualization: 'concept',
+  code: `// GREEDY: always pick the largest coin first
+function greedyCoinChange(coins, amount) {
+  coins.sort((a, b) => b - a); // largest first
+  const result = [];
+  for (const coin of coins) {
+    while (amount >= coin) {
+      result.push(coin);
+      amount -= coin;
+    }
+  }
+  return amount === 0 ? result : null;
+}
+
+// DP: find the optimal solution
+function dpCoinChange(coins, amount) {
+  const dp = Array(amount + 1).fill(Infinity);
+  const used = Array(amount + 1).fill(-1);
+  dp[0] = 0;
+  for (let i = 1; i <= amount; i++) {
+    for (const coin of coins) {
+      if (coin <= i && dp[i - coin] + 1 < dp[i]) {
+        dp[i] = dp[i - coin] + 1;
+        used[i] = coin;
+      }
+    }
+  }
+  // Reconstruct solution
+  const result = [];
+  let rem = amount;
+  while (rem > 0) { result.push(used[rem]); rem -= used[rem]; }
+  return result;
+}`,
+  description: `Greedy vs Dynamic Programming
+
+Both Greedy and DP solve optimization problems, but they differ fundamentally:
+
+Greedy:
+  - Makes the locally optimal choice at each step
+  - Fast: usually O(n log n) or O(n)
+  - Does NOT always find the global optimum
+  - Works when the "greedy choice property" holds
+
+Dynamic Programming:
+  - Considers ALL possible choices
+  - Finds the globally optimal solution — always
+  - Slower: usually O(n × m) time and space
+  - Works for problems with overlapping subproblems
+
+This example uses the Coin Change problem:
+  Given coins [1, 4, 6], make amount 8.
+  Greedy picks 6+1+1 = 3 coins (suboptimal!)
+  DP finds 4+4 = 2 coins (optimal!)
+
+Greedy fails here because picking the largest coin first doesn't guarantee the minimum number of coins.`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+    const coins = [1, 4, 6]
+    const target = 8
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [], remaining: target, approach: 'greedy' },
+      description: d(locale,
+        `Coin Change: make ${target} using coins [${coins.join(', ')}] with fewest coins. Let's try Greedy first.`,
+        `Cambio de monedas: formar ${target} con monedas [${coins.join(', ')}] con el mínimo. Probemos Greedy primero.`,
+      ),
+      codeLine: 2,
+      variables: { target, coins: '[1, 4, 6]', approach: 'Greedy' },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [6], remaining: 2, approach: 'greedy', operation: 'Greedy: pick largest (6)' },
+      description: d(locale,
+        'Greedy picks the largest coin that fits: 6. Remaining: 8 - 6 = 2.',
+        'Greedy elige la moneda más grande que cabe: 6. Restante: 8 - 6 = 2.',
+      ),
+      codeLine: 7,
+      variables: { picked: 6, remaining: 2 },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [6, 1], remaining: 1, approach: 'greedy', operation: 'Greedy: 6,4 too big → pick 1' },
+      description: d(locale,
+        'Remaining 2: 6 too big, 4 too big. Pick 1. Remaining: 1.',
+        'Restante 2: 6 muy grande, 4 muy grande. Elegir 1. Restante: 1.',
+      ),
+      codeLine: 7,
+      variables: { picked: 1, remaining: 1 },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [6, 1, 1], remaining: 0, approach: 'greedy', operation: 'Greedy done: 6+1+1 = 3 coins' },
+      description: d(locale,
+        'Greedy result: [6, 1, 1] = 3 coins. But is this optimal? Let\'s try DP...',
+        'Resultado Greedy: [6, 1, 1] = 3 monedas. ¿Pero es óptimo? Probemos DP...',
+      ),
+      codeLine: 10,
+      variables: { result: '[6, 1, 1]', totalCoins: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [], remaining: target, approach: 'dp', operation: 'DP: explore ALL combinations' },
+      description: d(locale,
+        'DP explores all possibilities. For amount 8, it checks every combination to find the minimum.',
+        'DP explora todas las posibilidades. Para monto 8, verifica cada combinación para encontrar el mínimo.',
+      ),
+      codeLine: 16,
+      variables: { approach: 'DP', target: 8 },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [4], remaining: 4, approach: 'dp', operation: 'DP: try coin 4' },
+      description: d(locale,
+        'DP considers coin 4: remaining 4. Can use coin 4 again!',
+        'DP considera moneda 4: restante 4. ¡Puede usar moneda 4 de nuevo!',
+      ),
+      codeLine: 21,
+      variables: { picked: 4, remaining: 4 },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [4, 4], remaining: 0, approach: 'dp', operation: 'DP optimal: 4+4 = 2 coins ✓' },
+      description: d(locale,
+        'DP finds [4, 4] = 2 coins. Optimal! Greedy missed this because it greedily picked 6 first.',
+        'DP encuentra [4, 4] = 2 monedas. ¡Óptimo! Greedy no lo encontró porque eligió 6 primero.',
+      ),
+      codeLine: 22,
+      variables: { result: '[4, 4]', totalCoins: 2, optimal: true },
+    })
+
+    steps.push({
+      concept: { type: 'coinChange', coins, target, selected: [], remaining: 0, approach: 'compare', greedyResult: [6, 1, 1], dpResult: [4, 4], operation: 'Greedy: 3 coins vs DP: 2 coins' },
+      description: d(locale,
+        'Greedy (3 coins) vs DP (2 coins). Greedy is fast but not always optimal. DP guarantees the best answer.',
+        'Greedy (3 monedas) vs DP (2 monedas). Greedy es rápido pero no siempre óptimo. DP garantiza la mejor respuesta.',
+      ),
+      codeLine: 1,
+      variables: { greedy: '3 coins', dp: '2 coins ✓', lesson: 'Greedy ≠ optimal' },
     })
 
     return steps
