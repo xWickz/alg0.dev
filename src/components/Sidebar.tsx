@@ -204,17 +204,26 @@ export default function Sidebar({ categories, selectedId, onSelect, locale = 'en
               className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-[18px] h-[18px] rounded border border-white/10 bg-white/[0.03] text-neutral-600 hover:text-neutral-300 hover:border-white/20 hover:bg-white/[0.06] transition-all"
               aria-label={locale === 'es' ? 'Limpiar búsqueda' : 'Clear search'}
             >
-              <svg className="w-2.5 h-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} aria-hidden="true">
+              <svg
+                className="w-2.5 h-2.5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.5}
+                aria-hidden="true"
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-          ) : !searchFocused && (
-            <kbd
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-[18px] h-[18px] text-[10px] font-mono rounded border border-white/10 text-neutral-600 bg-white/[0.03]"
-              aria-hidden="true"
-            >
-              /
-            </kbd>
+          ) : (
+            !searchFocused && (
+              <kbd
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 inline-flex items-center justify-center w-[18px] h-[18px] text-[10px] font-mono rounded border border-white/10 text-neutral-600 bg-white/[0.03]"
+                aria-hidden="true"
+              >
+                /
+              </kbd>
+            )
           )}
         </div>
       </div>
@@ -253,7 +262,10 @@ export default function Sidebar({ categories, selectedId, onSelect, locale = 'en
                 </div>
                 <span
                   className="text-[10px] font-normal text-neutral-600 bg-white/[0.04] px-1.5 py-0.5 rounded-full tabular-nums"
-                  aria-label={t.algorithmCountLabel.replace('{count}', String(category.algorithms.length))}
+                  aria-label={t.algorithmCountLabel.replace(
+                    '{count}',
+                    String(category.algorithms.length),
+                  )}
                 >
                   {category.algorithms.length}
                 </span>
@@ -297,11 +309,33 @@ export default function Sidebar({ categories, selectedId, onSelect, locale = 'en
 
       {/* Footer */}
       <div className="p-3 border-t border-white/[0.06]">
-        <div className="text-[10px] text-neutral-700 text-center">
-          {t.algorithmsCount.replace(
-            '{count}',
-            String(categories.reduce((sum, c) => sum + c.algorithms.length, 0)),
-          )}
+        <div className="flex items-center justify-center gap-1.5 text-[10px] text-neutral-700">
+          <span>
+            {t.algorithmsCount.replace(
+              '{count}',
+              String(categories.reduce((sum, c) => sum + c.algorithms.length, 0)),
+            )}
+          </span>
+          <span className="text-neutral-800">·</span>
+          <a
+            href="https://midu.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neutral-600 hover:text-neutral-400 transition-colors"
+          >
+            by midudev
+          </a>
+          <a
+            href="https://github.com/midudev/alg0.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-neutral-600 hover:text-neutral-400 transition-colors cursor-pointer"
+            aria-label="GitHub Alg0.dev - Algorithm Visualizer Repository"
+          >
+            <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+            </svg>
+          </a>
         </div>
       </div>
     </div>
