@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Locale } from '@i18n/translations'
-import { translations, getAlgorithmDescription } from '@i18n/translations'
+import { translations, getAlgorithmDescription, getAlgorithmMetaTitle, getAlgorithmMetaDescription } from '@i18n/translations'
 import { algorithms, categories } from '@lib/algorithms'
 import { usePlayback } from '@hooks/usePlayback'
 import { useResizablePanel } from '@hooks/useResizablePanel'
@@ -120,6 +120,11 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     return () => { document.body.style.overflow = '' }
   }, [mobileSidebarOpen, mobileCodePanelOpen])
 
+  const updateMetaDescription = useCallback((description: string) => {
+    const meta = document.querySelector('meta[name="description"]')
+    if (meta) meta.setAttribute('content', description)
+  }, [])
+
   const selectAlgorithm = useCallback((algo: Algorithm) => {
     selectAlgorithmBase(algo)
     setActiveTab('code')
@@ -127,8 +132,9 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     codePanel.expand()
     const url = getAlgorithmUrl(locale, algo.id)
     window.history.pushState({ algorithmId: algo.id }, '', url)
-    document.title = `${algo.name} | alg0.dev`
-  }, [locale, selectAlgorithmBase, codePanel.expand])
+    document.title = getAlgorithmMetaTitle(locale, algo.id, algo.name)
+    updateMetaDescription(getAlgorithmMetaDescription(locale, algo.id))
+  }, [locale, selectAlgorithmBase, codePanel.expand, updateMetaDescription])
 
   useEffect(() => {
     const handlePopState = () => {
@@ -138,17 +144,19 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
         if (algo) {
           selectAlgorithmBase(algo)
           setActiveTab('code')
-          document.title = `${algo.name} | alg0.dev`
+          document.title = getAlgorithmMetaTitle(locale, algo.id, algo.name)
+          updateMetaDescription(getAlgorithmMetaDescription(locale, algo.id))
           return
         }
       }
       clearSelection()
       document.title = t.siteTitle
+      updateMetaDescription(t.siteDescription)
     }
 
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [selectAlgorithmBase, clearSelection, t.siteTitle])
+  }, [locale, selectAlgorithmBase, clearSelection, t.siteTitle, t.siteDescription, updateMetaDescription])
 
   const getLocalizedDescription = (algo: Algorithm): string => {
     return getAlgorithmDescription(locale, algo.id) ?? algo.description

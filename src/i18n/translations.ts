@@ -1078,34 +1078,221 @@ Errores comunes:
 Algoritmos recursivos en este visualizador:
   Quick Sort, Merge Sort, DFS, N-Queens, Sudoku Solver, Torre de Hanoi`,
 
-      'stacks-queues': `Pilas y Colas
+      'stack': `Pila (Stack)
 
-Las Pilas y Colas son estructuras de datos lineales fundamentales usadas en toda la informática. Se diferencian en cómo se añaden y retiran los elementos.
+Una Pila es una estructura de datos lineal que sigue el principio LIFO — Último en Entrar, Primero en Salir. Como una pila de platos: solo puedes añadir y quitar del tope.
 
-Pila (LIFO — Último en Entrar, Primero en Salir):
-  Piensa en una pila de platos: siempre tomas del de arriba.
-  Operaciones:
-    push(item) — añadir arriba      O(1)
-    pop()      — retirar de arriba   O(1)
-    peek()     — ver el de arriba    O(1)
+Operaciones:
+  push(item) — añadir arriba        O(1)
+  pop()      — retirar de arriba     O(1)
+  peek()     — ver el de arriba      O(1)
+  isEmpty()  — verificar si está vacía O(1)
 
-  Se usa en: deshacer/rehacer, botón atrás del navegador, pila de llamadas,
-             recorrido DFS, evaluación de expresiones, análisis sintáctico
+Aplicaciones:
+  - Deshacer/rehacer
+  - Historial del navegador (atrás/adelante)
+  - Pila de llamadas de funciones
+  - Búsqueda en Profundidad (DFS)
+  - Evaluación de expresiones y análisis sintáctico
+  - Verificación de paréntesis balanceados
 
-Cola (FIFO — Primero en Entrar, Primero en Salir):
-  Piensa en una fila en una tienda: el primero en la fila es atendido primero.
-  Operaciones:
-    enqueue(item) — añadir al final    O(1)
-    dequeue()     — retirar del frente O(1)
-    front()       — ver el frente      O(1)
+Complejidad Espacial: O(n) para n elementos`,
 
-  Se usa en: planificación de tareas, recorrido BFS, colas de impresión,
-             buffers de mensajes, algoritmos de anchura
+      'queue': `Cola (Queue)
 
-Variantes:
-  - Deque (cola de doble extremo): añadir/retirar de ambos extremos
-  - Cola de Prioridad: elementos con prioridades, la más alta primero
-  - Cola Circular: se envuelve para reutilizar espacio`,
+Una Cola es una estructura de datos lineal que sigue el principio FIFO — Primero en Entrar, Primero en Salir. Como una fila en una tienda: el primero en llegar es atendido primero.
+
+Operaciones:
+  enqueue(item) — añadir al final     O(1)
+  dequeue()     — retirar del frente   O(1)
+  front()       — ver el frente        O(1)
+  isEmpty()     — verificar si está vacía O(1)
+
+Aplicaciones:
+  - Planificación de tareas (CPU, impresora)
+  - Búsqueda en Anchura (BFS)
+  - Buffers de mensajes y colas de eventos
+  - Limitación de velocidad (rate limiting)
+  - Sistemas de procesamiento de pedidos
+
+Complejidad Espacial: O(n) para n elementos`,
+
+      'two-pointers': `Dos Punteros (Two Pointers)
+
+Dos Punteros es una técnica donde dos índices se mueven a través de una estructura de datos (generalmente un arreglo) para resolver problemas eficientemente.
+
+Patrones comunes:
+  - Izquierda y derecha: comienzan desde ambos extremos, avanzan hacia el centro
+  - Lento y rápido: ambos empiezan desde el inicio a diferentes velocidades
+
+Complejidad Temporal: O(n) — cada puntero se mueve como máximo n veces
+Complejidad Espacial: O(1) — solo dos variables
+
+Problemas clásicos:
+  - Two Sum (arreglo ordenado)
+  - Contenedor con más agua
+  - Eliminar duplicados in-place
+  - Verificación de palíndromos
+  - Detección de ciclos en listas enlazadas (lento/rápido)`,
+
+      'sliding-window': `Ventana Deslizante (Sliding Window)
+
+La Ventana Deslizante mantiene un rango dinámico (ventana) sobre una secuencia, expandiéndose y contrayéndose para resolver problemas de subcadenas/subarreglos eficientemente.
+
+Cómo funciona:
+1. Expandir la ventana moviendo el puntero derecho
+2. Si se viola una condición, contraer desde la izquierda
+3. Registrar el mejor resultado encontrado
+
+Complejidad Temporal: O(n) — cada carácter se visita como máximo dos veces
+Complejidad Espacial: O(min(n, alfabeto))
+
+Problemas clásicos:
+  - Subcadena más larga sin caracteres repetidos
+  - Subcadena mínima que contiene todos los caracteres
+  - Suma máxima de subarreglo de tamaño k
+  - Reemplazo más largo de caracteres repetidos`,
+
+      'space-complexity': `Complejidad Espacial
+
+La Complejidad Espacial mide la cantidad de memoria que usa un algoritmo en relación al tamaño de la entrada. Al igual que la complejidad temporal, se usa la notación Big O.
+
+Complejidades espaciales comunes:
+  O(1)     — Constante: número fijo de variables
+  O(log n) — Logarítmica: profundidad de la pila de llamadas recursivas
+  O(n)     — Lineal: una copia de la entrada
+  O(n²)    — Cuadrática: matriz 2D del tamaño de la entrada
+
+Distinción importante:
+  - Espacio auxiliar: memoria extra más allá de la entrada
+  - Espacio total: entrada + auxiliar
+
+Ejemplos:
+  O(1): ordenamiento in-place (Bubble Sort), intercambio de variables
+  O(log n): búsqueda binaria recursiva (pila de llamadas)
+  O(n): Merge Sort (arreglos temporales), tablas hash
+  O(n²): tablas de DP, matrices de adyacencia`,
+
+      'memoization': `Memoización
+
+La memoización es una técnica de optimización que almacena los resultados de llamadas a funciones costosas y devuelve el resultado cacheado cuando se repiten las mismas entradas.
+
+Sin memoización (Fibonacci):
+  fib(5) llama a fib(4) + fib(3)
+  fib(4) llama a fib(3) + fib(2) — ¡fib(3) se calcula OTRA VEZ!
+  Exponencial: O(2^n) tiempo
+
+Con memoización:
+  Cada valor se calcula UNA SOLA VEZ y se cachea
+  Llamadas posteriores con la misma entrada retornan al instante
+  Lineal: O(n) tiempo, O(n) espacio
+
+Idea clave: intercambiar espacio por tiempo
+  - Almacenar resultados en un diccionario/arreglo
+  - Antes de calcular, verificar si el resultado ya existe
+  - Aceleración drástica para subproblemas superpuestos`,
+
+      'greedy-vs-dp': `Greedy vs Programación Dinámica
+
+Tanto Greedy como DP resuelven problemas de optimización, pero difieren fundamentalmente:
+
+Greedy (Voraz):
+  - Elige la opción localmente óptima en cada paso
+  - Rápido: generalmente O(n log n) u O(n)
+  - NO siempre encuentra el óptimo global
+  - Funciona cuando se cumple la "propiedad de elección voraz"
+
+Programación Dinámica:
+  - Considera TODAS las opciones posibles
+  - Encuentra la solución globalmente óptima — siempre
+  - Más lento: generalmente O(n × m) en tiempo y espacio
+  - Funciona para problemas con subproblemas superpuestos
+
+Ejemplo — Cambio de monedas con [1, 4, 6], cantidad 8:
+  Greedy elige 6+1+1 = 3 monedas (¡subóptimo!)
+  DP encuentra 4+4 = 2 monedas (¡óptimo!)`,
+
+      'linked-list': `Lista Enlazada (Linked List)
+
+Una Lista Enlazada es una estructura de datos lineal donde cada elemento (nodo) contiene un valor y un puntero al siguiente nodo.
+
+A diferencia de los arreglos, los elementos no están en memoria contigua — cada nodo puede estar en cualquier parte, conectado por punteros.
+
+Operaciones:
+  append:  añadir al final          — O(1) con puntero tail
+  prepend: añadir al inicio         — O(1)
+  search:  recorrer para encontrar  — O(n)
+  delete:  eliminar nodo por valor  — O(n)
+  access:  recorrer desde la cabeza — O(n)
+
+Ventajas:
+  - Inserción/eliminación O(1) en posiciones conocidas
+  - Tamaño dinámico, sin memoria desperdiciada
+
+Desventajas:
+  - Acceso O(n) por índice (sin acceso aleatorio)
+  - Memoria extra para punteros
+  - No es cache-friendly`,
+
+      'hash-table': `Tabla Hash (Hash Table)
+
+Una Tabla Hash mapea claves a valores usando una función hash. Proporciona tiempo casi constante O(1) para insertar, buscar y eliminar.
+
+Cómo funciona:
+1. Una función hash convierte la clave en un índice del arreglo
+2. El valor se almacena en ese índice (bucket)
+3. Si dos claves producen el mismo índice → colisión
+
+Manejo de colisiones (encadenamiento):
+  Cada bucket almacena una lista de entradas.
+  Múltiples claves pueden compartir el mismo bucket.
+
+Complejidad Temporal:
+  Promedio: O(1) para set, get, delete
+  Peor:     O(n) cuando todas las claves colisionan
+
+Complejidad Espacial: O(n)
+
+Aplicaciones: cachés, bases de datos, tablas de símbolos, conteo de frecuencias, deduplicación`,
+
+      'binary-search-tree': `Árbol Binario de Búsqueda (BST)
+
+Un BST es un árbol donde cada nodo tiene como máximo dos hijos, y para cada nodo:
+  - El subárbol izquierdo contiene solo valores menores
+  - El subárbol derecho contiene solo valores mayores
+
+Este ordenamiento permite una búsqueda eficiente al dividir el espacio de búsqueda a la mitad en cada paso.
+
+Operaciones:
+  insert: comparar e ir a izquierda/derecha — O(h)
+  search: comparar e ir a izquierda/derecha — O(h)
+  delete: encontrar y reestructurar         — O(h)
+
+Donde h = altura del árbol:
+  Árbol balanceado: h = O(log n) — ¡eficiente!
+  Degenerado:       h = O(n) — como una lista enlazada
+
+Aplicaciones: almacenamiento de datos ordenados, consultas por rango, colas de prioridad (con balanceo)`,
+
+      'heap': `Montículo (Heap)
+
+Un Heap es un árbol binario completo donde cada padre es menor (min-heap) o mayor (max-heap) que sus hijos. Se almacena como un arreglo.
+
+Mapeo arreglo-árbol (índice base 0):
+  Padre de i:       Math.floor((i - 1) / 2)
+  Hijo izquierdo:   2 * i + 1
+  Hijo derecho:     2 * i + 2
+
+Operaciones:
+  insert:     añadir al final, subir (bubble up)    — O(log n)
+  extractMin: eliminar raíz, bajar (bubble down)    — O(log n)
+  peek:       retornar la raíz                      — O(1)
+
+Aplicaciones:
+  - Colas de prioridad
+  - Heap Sort
+  - Algoritmo de Dijkstra
+  - Encontrar el k-ésimo menor/mayor`,
 
       'bubble-sort': `Bubble Sort (Ordenamiento Burbuja)
 
