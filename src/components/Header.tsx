@@ -54,7 +54,7 @@ export default function Header({
 }: HeaderProps) {
   return (
     <header
-      className="h-12 shrink-0 flex items-center justify-between px-3 md:px-5 border-b border-white/[0.08] bg-black z-10"
+      className="h-12 shrink-0 flex items-center justify-between px-3 md:px-5 border-b border-white/8 bg-black z-10"
       role="banner"
     >
       {/* Left: Logo + Breadcrumb */}
@@ -62,7 +62,7 @@ export default function Header({
         {isMobile ? (
           <button
             onClick={onToggleMobileSidebar}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/[0.06] transition-colors text-neutral-400 hover:text-white shrink-0"
+            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/6 transition-colors text-neutral-400 hover:text-white shrink-0"
             aria-label={locale === 'es' ? 'Abrir menú' : 'Open menu'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -72,7 +72,7 @@ export default function Header({
         ) : sidebarCollapsed ? (
           <button
             onClick={onExpandSidebar}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/[0.06] transition-colors text-neutral-400 hover:text-white"
+            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/6 transition-colors text-neutral-400 hover:text-white"
             aria-label={t.expandSidebar}
           >
             <svg
@@ -162,7 +162,7 @@ export default function Header({
         {isMobile && selectedAlgorithm && (
           <button
             onClick={onToggleMobileCodePanel}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/[0.06] transition-colors text-neutral-400 hover:text-white"
+            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/6 transition-colors text-neutral-400 hover:text-white"
             aria-label={locale === 'es' ? 'Ver código' : 'View code'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -173,7 +173,7 @@ export default function Header({
         {!isMobile && codePanelCollapsed && (
           <button
             onClick={onExpandCodePanel}
-            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/[0.06] transition-colors text-neutral-400 hover:text-white"
+            className="flex items-center justify-center w-7 h-7 rounded-md hover:bg-white/6 transition-colors text-neutral-400 hover:text-white"
             aria-label={t.expandCodePanel}
           >
             <svg
@@ -192,7 +192,7 @@ export default function Header({
             </svg>
           </button>
         )}
-        <nav aria-label={locale === 'es' ? 'Idioma' : 'Language'} className="flex items-center gap-0.5 bg-white/[0.04] rounded-lg p-0.5 border border-white/[0.08]">
+        <nav aria-label={locale === 'es' ? 'Idioma' : 'Language'} className="flex items-center gap-0.5 bg-white/6 rounded-lg p-0.5 border border-white/8">
           {locales.map((l) => (
             <a
               key={l}
@@ -200,7 +200,7 @@ export default function Header({
               className={`px-2 md:px-2.5 py-1 text-[11px] font-medium rounded-md transition-all ${
                 l === locale
                   ? 'bg-white text-black'
-                  : 'text-neutral-500 hover:text-white hover:bg-white/[0.06]'
+                  : 'text-neutral-500 hover:text-white hover:bg-white/6'
               }`}
               aria-label={localeNames[l]}
               aria-current={l === locale ? 'page' : undefined}

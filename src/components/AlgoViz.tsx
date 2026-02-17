@@ -241,7 +241,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
             </aside>
             {/* Drag handle */}
             <div
-              className={`w-[1px] shrink-0 cursor-col-resize group relative select-none ${
+              className={`w-px shrink-0 cursor-col-resize group relative select-none ${
                 sidebar.collapsed && !sidebar.isDragging ? 'hidden' : ''
               }`}
               onMouseDown={sidebar.handleDragStart}
@@ -257,11 +257,11 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               }}
             >
               <div
-                className={`absolute inset-y-0 -left-[2px] w-[5px] z-20 ${
+                className={`absolute inset-y-0 -left-0.5 w-[5px] z-20 ${
                   sidebar.isDragging ? 'bg-blue-500/50' : 'hover:bg-white/10'
                 } transition-colors`}
               />
-              <div className="h-full bg-white/[0.08]" />
+              <div className="h-full bg-white/8" />
             </div>
           </div>
         )}
@@ -277,7 +277,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               aria-hidden="true"
             />
             <aside
-              className={`fixed top-0 left-0 bottom-0 w-[280px] bg-black z-50 border-r border-white/[0.08] transition-transform duration-300 ease-in-out ${
+              className={`fixed top-0 left-0 bottom-0 w-[280px] bg-black z-50 border-r border-white/8 transition-transform duration-300 ease-in-out ${
                 mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
               }`}
               aria-label={locale === 'es' ? 'Categorías de algoritmos' : 'Algorithm categories'}
@@ -285,13 +285,13 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               inert={!mobileSidebarOpen || undefined}
             >
               <div className="h-full flex flex-col">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
                   <span className="text-sm font-semibold text-white font-heading">
                     {locale === 'es' ? 'Algoritmos' : 'Algorithms'}
                   </span>
                   <button
                     onClick={() => setMobileSidebarOpen(false)}
-                    className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors"
+                    className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/6 text-neutral-400 hover:text-white transition-colors"
                     aria-label={locale === 'es' ? 'Cerrar menú' : 'Close menu'}
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -321,7 +321,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
           {/* Step description */}
           <div className="px-4 pb-3 md:px-8 md:pb-5" aria-live="polite" aria-atomic="true">
             {currentStepData?.description && (
-              <div className="text-xs md:text-sm text-neutral-300 bg-white/[0.05] rounded-lg px-3 py-2 md:px-5 md:py-3 border border-white/[0.12]">
+              <div className="text-xs md:text-sm text-neutral-300 bg-white/5 rounded-lg px-3 py-2 md:px-5 md:py-3 border border-white/12">
                 <span className="text-amber-300/90 font-medium mr-2">
                   {t.step.replace('{n}', String(currentStep + 1))}
                 </span>
@@ -336,7 +336,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
           <div className="relative shrink-0 flex">
             {/* Drag handle */}
             <div
-              className={`w-[1px] shrink-0 cursor-col-resize group relative select-none ${
+              className={`w-px shrink-0 cursor-col-resize group relative select-none ${
                 codePanel.collapsed && !codePanel.isDragging ? 'hidden' : ''
               }`}
               onMouseDown={codePanel.handleDragStart}
@@ -352,11 +352,11 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               }}
             >
               <div
-                className={`absolute inset-y-0 -right-[2px] w-[5px] z-20 ${
+                className={`absolute inset-y-0 -right-0.5 w-[5px] z-20 ${
                   codePanel.isDragging ? 'bg-blue-500/50' : 'hover:bg-white/10'
                 } transition-colors`}
               />
-              <div className="h-full bg-white/[0.08]" />
+              <div className="h-full bg-white/8" />
             </div>
             <aside
               className={`bg-black overflow-hidden ${
@@ -410,7 +410,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               aria-hidden="true"
             />
             <aside
-              className={`fixed top-0 right-0 bottom-0 w-[min(360px,90vw)] bg-black z-50 border-l border-white/[0.08] transition-transform duration-300 ease-in-out ${
+              className={`fixed top-0 right-0 bottom-0 w-[min(360px,90vw)] bg-black z-50 border-l border-white/8 transition-transform duration-300 ease-in-out ${
                 mobileCodePanelOpen ? 'translate-x-0' : 'translate-x-full'
               }`}
               aria-label={locale === 'es' ? 'Panel de código y detalles' : 'Code and details panel'}
@@ -418,13 +418,13 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               inert={!mobileCodePanelOpen || undefined}
             >
               <div className="h-full flex flex-col">
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.08]">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/8">
                   <span className="text-sm font-semibold text-white font-heading">
                     {locale === 'es' ? 'Código' : 'Code'}
                   </span>
                   <button
                     onClick={() => setMobileCodePanelOpen(false)}
-                    className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors"
+                    className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/6 text-neutral-400 hover:text-white transition-colors"
                     aria-label={locale === 'es' ? 'Cerrar panel' : 'Close panel'}
                   >
                     <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -455,10 +455,10 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
 
       {/* Mobile bottom controls bar */}
       {isMobile && selectedAlgorithm && (
-        <div className="shrink-0 flex items-center justify-between px-3 py-2 border-t border-white/[0.08] bg-black z-10 gap-2">
+        <div className="shrink-0 flex items-center justify-between px-3 py-2 border-t border-white/8 bg-black z-10 gap-2">
           <button
             onClick={() => setMobileSidebarOpen(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors shrink-0"
+            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/6 text-neutral-400 hover:text-white transition-colors shrink-0"
             aria-label={locale === 'es' ? 'Abrir menú' : 'Open menu'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
@@ -470,7 +470,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               <button
                 onClick={stepBackward}
                 disabled={currentStep <= 0}
-                className="p-1.5 rounded-md hover:bg-white/[0.08] disabled:opacity-20 text-neutral-500 hover:text-white transition-all active:scale-95"
+                className="p-1.5 rounded-md hover:bg-white/8 disabled:opacity-20 text-neutral-500 hover:text-white transition-all active:scale-95"
                 aria-label={t.stepBackward}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -496,7 +496,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               <button
                 onClick={stepForward}
                 disabled={currentStep >= steps.length - 1}
-                className="p-1.5 rounded-md hover:bg-white/[0.08] disabled:opacity-20 text-neutral-500 hover:text-white transition-all active:scale-95"
+                className="p-1.5 rounded-md hover:bg-white/8 disabled:opacity-20 text-neutral-500 hover:text-white transition-all active:scale-95"
                 aria-label={t.stepForward}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -510,7 +510,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
           </div>
           <button
             onClick={() => setMobileCodePanelOpen(true)}
-            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors shrink-0"
+            className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/6 text-neutral-400 hover:text-white transition-colors shrink-0"
             aria-label={locale === 'es' ? 'Ver código' : 'View code'}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">

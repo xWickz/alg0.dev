@@ -128,7 +128,7 @@ export default function CodePanel({
     <div className="flex flex-col h-full">
       {/* Tabs */}
       <div
-        className="flex border-b border-white/[0.08] shrink-0"
+        className="flex border-b border-white/8 shrink-0"
         role="tablist"
         aria-label={locale === 'es' ? 'Pestañas de código y detalles' : 'Code and details tabs'}
         onKeyDown={(e) => {
@@ -161,8 +161,8 @@ export default function CodePanel({
               <kbd
                 className={`inline-flex items-center justify-center w-[18px] h-[18px] text-[10px] font-mono rounded border ${
                   activeTab === tab
-                    ? 'border-white/20 text-white/60 bg-white/[0.06]'
-                    : 'border-white/10 text-neutral-600 bg-white/[0.03]'
+                    ? 'border-white/20 text-white/60 bg-white/6'
+                    : 'border-white/10 text-neutral-600 bg-white/3'
                 }`}
                 aria-hidden="true"
               >
@@ -230,7 +230,7 @@ export default function CodePanel({
           {/* Variables panel */}
           {variables && Object.keys(variables).length > 0 && (
             <div
-              className="shrink-0 border-t border-white/[0.08]"
+              className="shrink-0 border-t border-white/8"
               role="region"
               aria-label={t.variables}
             >
