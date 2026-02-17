@@ -3,8 +3,16 @@ import type { Algorithm, Category } from '@lib/types'
 import {
   bigONotation,
   recursion,
-  stacksAndQueues,
 } from '@lib/algorithms/concepts'
+
+import {
+  stack,
+  queue,
+  linkedList,
+  hashTable,
+  binarySearchTree,
+  heap,
+} from '@lib/algorithms/data-structures'
 
 import {
   bubbleSort,
@@ -51,7 +59,13 @@ export const algorithms: Algorithm[] = [
   // Concepts
   bigONotation,
   recursion,
-  stacksAndQueues,
+  // Data Structures
+  stack,
+  queue,
+  linkedList,
+  hashTable,
+  binarySearchTree,
+  heap,
   // Sorting
   bubbleSort,
   selectionSort,
@@ -87,6 +101,7 @@ export const algorithms: Algorithm[] = [
 
 export const categories: Category[] = [
   { name: 'Concepts', algorithms: algorithms.filter((a) => a.category === 'Concepts') },
+  { name: 'Data Structures', algorithms: algorithms.filter((a) => a.category === 'Data Structures') },
   { name: 'Sorting', algorithms: algorithms.filter((a) => a.category === 'Sorting') },
   { name: 'Searching', algorithms: algorithms.filter((a) => a.category === 'Searching') },
   { name: 'Graphs', algorithms: algorithms.filter((a) => a.category === 'Graphs') },

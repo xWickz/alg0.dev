@@ -87,10 +87,13 @@ The chart shows how each complexity's curve grows as the input size increases.`,
     const upTo = (name: string) => all.slice(0, all.indexOf(name) + 1)
 
     // Code line references (1-indexed within the code string):
-    //  1: // O(1) — Constant time       |  15: // O(n²) — Quadratic time
-    //  2: function getFirst(arr) {       |  16: function hasDuplicate(arr) {
-    //  6: // O(n) — Linear time          |  25: // O(log n) — Logarithmic time
-    //  7: function findMax(arr) {        |  26: function binarySearch(arr, target) {
+    //  1: // O(1) — Constant time          15: // O(n²) — Quadratic time
+    //  2: function getFirst(arr) {         16: function hasDuplicate(arr) {
+    //  3:   return arr[0];                 17:   for (let i = 0; ...) {        ← outer loop
+    //  6: // O(n) — Linear time            18:     for (let j = i+1; ...) {    ← inner loop
+    //  7: function findMax(arr) {          25: // O(log n) — Logarithmic time
+    //  9:   for (let i = 1; ...) {         26: function binarySearch(arr, target) {
+    //                                      28:   while (lo <= hi) {
 
     // Step 1: Introduction — no curves yet
     steps.push({
@@ -112,7 +115,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(1) — Constant time. No matter how big n gets, operations stay at 1. A perfectly flat line.',
         'O(1) — Tiempo constante. Sin importar cuánto crezca n, las operaciones se mantienen en 1. Una línea perfectamente plana.',
       ),
-      codeLine: 1,
+      codeLine: 3,
       variables: { complexity: 'O(1)', 'ops(1)': 1, 'ops(5)': 1, 'ops(10)': 1 },
     })
 
@@ -124,7 +127,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(log n) — Logarithmic time. At small inputs (n≤4) it barely grows. Let\'s see what happens as n increases...',
         'O(log n) — Tiempo logarítmico. Con entradas pequeñas (n≤4) apenas crece. Veamos qué pasa cuando n aumenta...',
       ),
-      codeLine: 25,
+      codeLine: 26,
       variables: { complexity: 'O(log n)', 'ops(2)': 1, 'ops(4)': 2 },
     })
 
@@ -135,7 +138,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(log n) at n=10: only ~3.3 operations. Halving the problem each step keeps growth very slow — great for binary search.',
         'O(log n) con n=10: solo ~3.3 operaciones. Dividir el problema a la mitad en cada paso mantiene un crecimiento muy lento — ideal para búsqueda binaria.',
       ),
-      codeLine: 26,
+      codeLine: 28,
       variables: { complexity: 'O(log n)', 'ops(4)': 2, 'ops(10)': '3.3' },
     })
 
@@ -147,7 +150,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(n) — Linear time. At n=4, 4 operations. It grows proportionally. Watch the diagonal extend...',
         'O(n) — Tiempo lineal. Con n=4, 4 operaciones. Crece proporcionalmente. Observa cómo se extiende la diagonal...',
       ),
-      codeLine: 6,
+      codeLine: 7,
       variables: { complexity: 'O(n)', 'ops(2)': 2, 'ops(4)': 4 },
     })
 
@@ -158,7 +161,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(n) at n=10: exactly 10 operations. One operation per element — notice how it pulls away from O(log n).',
         'O(n) con n=10: exactamente 10 operaciones. Una operación por elemento — observa cómo se aleja de O(log n).',
       ),
-      codeLine: 7,
+      codeLine: 9,
       variables: { complexity: 'O(n)', 'ops(4)': 4, 'ops(10)': 10 },
     })
 
@@ -194,7 +197,7 @@ The chart shows how each complexity's curve grows as the input size increases.`,
         'O(n²) — Quadratic time. At n=4 it\'s already 16 operations. Nested loops. Watch it explode...',
         'O(n²) — Tiempo cuadrático. Con n=4 ya son 16 operaciones. Bucles anidados. Observa cómo explota...',
       ),
-      codeLine: 15,
+      codeLine: 16,
       variables: { complexity: 'O(n²)', 'ops(2)': 4, 'ops(4)': 16 },
     })
 
@@ -491,7 +494,7 @@ Common recursive algorithms:
 }
 
 // ============================================================
-// STACKS & QUEUES
+// STACK
 // ============================================================
 
 type SQItem = { value: number; state: 'normal' | 'entering' | 'leaving' }
@@ -500,367 +503,275 @@ function sq(items: SQItem[]): SQItem[] {
   return items
 }
 
-export const stacksAndQueues: Algorithm = {
-  id: 'stacks-queues',
-  name: 'Stacks & Queues',
-  category: 'Concepts',
+export const stack: Algorithm = {
+  id: 'stack',
+  name: 'Stack',
+  category: 'Data Structures',
   visualization: 'concept',
-  code: `// === STACK (LIFO: Last In, First Out) ===
-class Stack {
+  code: `class Stack {
   constructor() { this.items = []; }
 
-  push(item) {          // Add to top
+  push(item) {
     this.items.push(item);
   }
 
-  pop() {               // Remove from top
+  pop() {
     return this.items.pop();
   }
 
-  peek() {              // View top element
+  peek() {
     return this.items[this.items.length - 1];
   }
-}
 
-// === QUEUE (FIFO: First In, First Out) ===
-class Queue {
-  constructor() { this.items = []; }
-
-  enqueue(item) {       // Add to back
-    this.items.push(item);
+  isEmpty() {
+    return this.items.length === 0;
   }
 
-  dequeue() {           // Remove from front
-    return this.items.shift();
-  }
-
-  front() {             // View front element
-    return this.items[0];
+  get size() {
+    return this.items.length;
   }
 }`,
-  description: `Stacks & Queues
+  description: `Stack
 
-Stacks and Queues are fundamental linear data structures that differ in how elements are added and removed.
+A Stack is a linear data structure that follows the LIFO principle — Last In, First Out. Like a stack of plates: you add and remove from the top only.
 
-Stack (LIFO — Last In, First Out):
-  Like a stack of plates: you add and remove from the top.
-  - push: add element to top
-  - pop: remove element from top
-  - peek: view top element without removing
-
-Queue (FIFO — First In, First Out):
-  Like a line at a store: first person in line is served first.
-  - enqueue: add element to back
-  - dequeue: remove element from front
-  - front: view front element without removing
+Operations:
+  - push: add element to the top — O(1)
+  - pop: remove element from the top — O(1)
+  - peek: view top element without removing — O(1)
+  - isEmpty: check if stack is empty — O(1)
 
 Applications:
-  Stack: undo/redo, browser history, function call stack, DFS
-  Queue: task scheduling, BFS, print queue, message buffers
+  - Undo/redo functionality
+  - Browser history (back/forward)
+  - Function call stack
+  - Depth-First Search (DFS)
+  - Expression evaluation and parsing
+  - Balanced parentheses checking
 
-Time Complexity: O(1) for all operations (push, pop, enqueue, dequeue)
 Space Complexity: O(n) for n elements`,
 
   generateSteps(locale = 'en') {
     const steps: Step[] = []
 
-    // ── STACK DEMONSTRATION ──
-
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: [],
-      },
-      description: d(
-        locale,
-        'STACK (LIFO): Last In, First Out. Like a stack of plates — you add and remove from the top only.',
-        'PILA (LIFO): Último en Entrar, Primero en Salir. Como una pila de platos — se añade y retira solo desde arriba.',
+      concept: { type: 'stackQueue', structure: 'stack', items: [] },
+      description: d(locale,
+        'An empty Stack. LIFO: Last In, First Out — like a stack of plates.',
+        'Una Pila vacía. LIFO: Último en Entrar, Primero en Salir — como una pila de platos.',
       ),
       codeLine: 1,
-      variables: { structure: 'Stack', size: 0 },
+      variables: { size: 0 },
     })
 
-    // Push 10
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([{ value: 10, state: 'entering' }]),
-        operation: 'push(10)',
-      },
-      description: d(
-        locale,
-        'stack.push(10) — Push 10 onto the stack. It becomes the top (and only) element.',
-        'stack.push(10) — Apilar 10. Se convierte en el elemento superior (y único).',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'entering' }]), operation: 'push(10)' },
+      description: d(locale,
+        'push(10): 10 is placed on top. It\'s the only element.',
+        'push(10): 10 se coloca arriba. Es el único elemento.',
       ),
-      codeLine: 5,
-      variables: { structure: 'Stack', operation: 'push(10)', top: 10, size: 1 },
+      codeLine: 4,
+      variables: { operation: 'push(10)', top: 10, size: 1 },
     })
 
-    // Push 20
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'entering' },
-        ]),
-        operation: 'push(20)',
-      },
-      description: d(
-        locale,
-        'stack.push(20) — Push 20. It goes on top of 10.',
-        'stack.push(20) — Apilar 20. Va encima del 10.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'entering' }]), operation: 'push(20)' },
+      description: d(locale,
+        'push(20): 20 goes on top of 10.',
+        'push(20): 20 va encima del 10.',
       ),
-      codeLine: 5,
-      variables: { structure: 'Stack', operation: 'push(20)', top: 20, size: 2 },
+      codeLine: 4,
+      variables: { operation: 'push(20)', top: 20, size: 2 },
     })
 
-    // Push 30
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'entering' },
-        ]),
-        operation: 'push(30)',
-      },
-      description: d(
-        locale,
-        'stack.push(30) — Push 30. Now the stack has [10, 20, 30] with 30 on top.',
-        'stack.push(30) — Apilar 30. Ahora la pila tiene [10, 20, 30] con 30 arriba.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }, { value: 30, state: 'entering' }]), operation: 'push(30)' },
+      description: d(locale,
+        'push(30): Stack is now [10, 20, 30] with 30 on top.',
+        'push(30): La pila ahora es [10, 20, 30] con 30 arriba.',
       ),
-      codeLine: 5,
-      variables: { structure: 'Stack', operation: 'push(30)', top: 30, size: 3 },
+      codeLine: 4,
+      variables: { operation: 'push(30)', top: 30, size: 3 },
     })
 
-    // Push 42
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'normal' },
-          { value: 42, state: 'entering' },
-        ]),
-        operation: 'push(42)',
-      },
-      description: d(
-        locale,
-        'stack.push(42) — Push 42. The most recent element is always on top.',
-        'stack.push(42) — Apilar 42. El elemento más reciente siempre está arriba.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }, { value: 30, state: 'normal' }, { value: 42, state: 'entering' }]), operation: 'push(42)' },
+      description: d(locale,
+        'push(42): The most recent element is always on top.',
+        'push(42): El elemento más reciente siempre está arriba.',
       ),
-      codeLine: 5,
-      variables: { structure: 'Stack', operation: 'push(42)', top: 42, size: 4 },
+      codeLine: 4,
+      variables: { operation: 'push(42)', top: 42, size: 4 },
     })
 
-    // Pop 42
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'normal' },
-        ]),
-        operation: 'pop() → 42',
-        removedValue: 42,
-      },
-      description: d(
-        locale,
-        'stack.pop() → 42. LIFO: the last pushed element (42) is removed first.',
-        'stack.pop() → 42. LIFO: el último elemento apilado (42) se retira primero.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }, { value: 30, state: 'normal' }]), operation: 'pop() → 42', removedValue: 42 },
+      description: d(locale,
+        'pop() → 42. LIFO: the last pushed element is removed first!',
+        'pop() → 42. LIFO: ¡el último elemento apilado se retira primero!',
       ),
-      codeLine: 9,
-      variables: { structure: 'Stack', operation: 'pop()', removed: 42, top: 30, size: 3 },
+      codeLine: 8,
+      variables: { operation: 'pop()', removed: 42, top: 30, size: 3 },
     })
 
-    // Pop 30
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'stack',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-        ]),
-        operation: 'pop() → 30',
-        removedValue: 30,
-      },
-      description: d(
-        locale,
-        'stack.pop() → 30. Now 20 is the top element.',
-        'stack.pop() → 30. Ahora 20 es el elemento superior.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }]), operation: 'pop() → 30', removedValue: 30 },
+      description: d(locale,
+        'pop() → 30. Now 20 is the top. Elements come out in reverse insertion order.',
+        'pop() → 30. Ahora 20 está arriba. Los elementos salen en orden inverso al de inserción.',
       ),
-      codeLine: 9,
-      variables: { structure: 'Stack', operation: 'pop()', removed: 30, top: 20, size: 2 },
+      codeLine: 8,
+      variables: { operation: 'pop()', removed: 30, top: 20, size: 2 },
     })
 
-    // ── QUEUE DEMONSTRATION ──
-
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: [],
-      },
-      description: d(
-        locale,
-        'QUEUE (FIFO): First In, First Out. Like a line at a store — the first person in line is served first.',
-        'COLA (FIFO): Primero en Entrar, Primero en Salir. Como una fila en una tienda — el primero en llegar es atendido primero.',
+      concept: { type: 'stackQueue', structure: 'stack', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }]), operation: 'peek() → 20' },
+      description: d(locale,
+        'peek() → 20. View the top without removing it. All operations are O(1)!',
+        'peek() → 20. Ver el tope sin eliminarlo. ¡Todas las operaciones son O(1)!',
       ),
-      codeLine: 18,
-      variables: { structure: 'Queue', size: 0 },
+      codeLine: 11,
+      variables: { operation: 'peek()', top: 20, size: 2, complexity: 'O(1)' },
     })
 
-    // Enqueue 10
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([{ value: 10, state: 'entering' }]),
-        operation: 'enqueue(10)',
-      },
-      description: d(
-        locale,
-        'queue.enqueue(10) — Add 10 to the back of the queue.',
-        'queue.enqueue(10) — Añadir 10 al final de la cola.',
-      ),
-      codeLine: 22,
-      variables: { structure: 'Queue', operation: 'enqueue(10)', front: 10, size: 1 },
-    })
+    return steps
+  },
+}
 
-    // Enqueue 20
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'entering' },
-        ]),
-        operation: 'enqueue(20)',
-      },
-      description: d(
-        locale,
-        'queue.enqueue(20) — Add 20 to the back. 10 is still at the front.',
-        'queue.enqueue(20) — Añadir 20 al final. 10 sigue al frente.',
-      ),
-      codeLine: 22,
-      variables: { structure: 'Queue', operation: 'enqueue(20)', front: 10, size: 2 },
-    })
+// ============================================================
+// QUEUE
+// ============================================================
 
-    // Enqueue 30
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'entering' },
-        ]),
-        operation: 'enqueue(30)',
-      },
-      description: d(
-        locale,
-        'queue.enqueue(30) — Add 30 to the back. Queue: [10, 20, 30].',
-        'queue.enqueue(30) — Añadir 30 al final. Cola: [10, 20, 30].',
-      ),
-      codeLine: 22,
-      variables: { structure: 'Queue', operation: 'enqueue(30)', front: 10, size: 3 },
-    })
+export const queue: Algorithm = {
+  id: 'queue',
+  name: 'Queue',
+  category: 'Data Structures',
+  visualization: 'concept',
+  code: `class Queue {
+  constructor() { this.items = []; }
 
-    // Enqueue 42
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 10, state: 'normal' },
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'normal' },
-          { value: 42, state: 'entering' },
-        ]),
-        operation: 'enqueue(42)',
-      },
-      description: d(
-        locale,
-        'queue.enqueue(42) — Add 42 to the back. 10 is still first in line.',
-        'queue.enqueue(42) — Añadir 42 al final. 10 sigue siendo el primero en la fila.',
-      ),
-      codeLine: 22,
-      variables: { structure: 'Queue', operation: 'enqueue(42)', front: 10, size: 4 },
-    })
+  enqueue(item) {
+    this.items.push(item);
+  }
 
-    // Dequeue 10
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 20, state: 'normal' },
-          { value: 30, state: 'normal' },
-          { value: 42, state: 'normal' },
-        ]),
-        operation: 'dequeue() → 10',
-        removedValue: 10,
-      },
-      description: d(
-        locale,
-        'queue.dequeue() → 10. FIFO: the first element added (10) is removed first! Unlike a stack.',
-        'queue.dequeue() → 10. FIFO: ¡el primer elemento añadido (10) se retira primero! A diferencia de una pila.',
-      ),
-      codeLine: 26,
-      variables: { structure: 'Queue', operation: 'dequeue()', removed: 10, front: 20, size: 3 },
-    })
+  dequeue() {
+    return this.items.shift();
+  }
 
-    // Dequeue 20
-    steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 30, state: 'normal' },
-          { value: 42, state: 'normal' },
-        ]),
-        operation: 'dequeue() → 20',
-        removedValue: 20,
-      },
-      description: d(
-        locale,
-        'queue.dequeue() → 20. Now 30 is at the front. Elements are always processed in arrival order.',
-        'queue.dequeue() → 20. Ahora 30 está al frente. Los elementos se procesan siempre en orden de llegada.',
-      ),
-      codeLine: 26,
-      variables: { structure: 'Queue', operation: 'dequeue()', removed: 20, front: 30, size: 2 },
-    })
+  front() {
+    return this.items[0];
+  }
 
-    // Summary
+  isEmpty() {
+    return this.items.length === 0;
+  }
+
+  get size() {
+    return this.items.length;
+  }
+}`,
+  description: `Queue
+
+A Queue is a linear data structure that follows the FIFO principle — First In, First Out. Like a line at a store: the first person in line is served first.
+
+Operations:
+  - enqueue: add element to the back — O(1)
+  - dequeue: remove element from the front — O(1)*
+  - front: view front element without removing — O(1)
+  - isEmpty: check if queue is empty — O(1)
+
+*Note: shift() is O(n) with arrays; use a linked list or circular buffer for true O(1).
+
+Applications:
+  - Task scheduling (CPU, printer)
+  - Breadth-First Search (BFS)
+  - Message buffers and event queues
+  - Rate limiting
+  - Order processing systems
+
+Space Complexity: O(n) for n elements`,
+
+  generateSteps(locale = 'en') {
+    const steps: Step[] = []
+
     steps.push({
-      concept: {
-        type: 'stackQueue',
-        structure: 'queue',
-        items: sq([
-          { value: 30, state: 'normal' },
-          { value: 42, state: 'normal' },
-        ]),
-      },
-      description: d(
-        locale,
-        'Key difference: Stack removes the NEWEST element (LIFO), Queue removes the OLDEST element (FIFO). Both have O(1) operations.',
-        'Diferencia clave: La Pila retira el elemento MÁS NUEVO (LIFO), la Cola retira el MÁS ANTIGUO (FIFO). Ambas tienen operaciones O(1).',
+      concept: { type: 'stackQueue', structure: 'queue', items: [] },
+      description: d(locale,
+        'An empty Queue. FIFO: First In, First Out — like a line at a store.',
+        'Una Cola vacía. FIFO: Primero en Entrar, Primero en Salir — como una fila en una tienda.',
       ),
       codeLine: 1,
-      variables: { Stack: 'LIFO', Queue: 'FIFO', complexity: 'O(1)' },
+      variables: { size: 0 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 10, state: 'entering' }]), operation: 'enqueue(10)' },
+      description: d(locale,
+        'enqueue(10): 10 enters at the back of the queue.',
+        'enqueue(10): 10 entra por el final de la cola.',
+      ),
+      codeLine: 4,
+      variables: { operation: 'enqueue(10)', front: 10, size: 1 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'entering' }]), operation: 'enqueue(20)' },
+      description: d(locale,
+        'enqueue(20): 20 joins at the back. 10 is still at the front.',
+        'enqueue(20): 20 se une al final. 10 sigue al frente.',
+      ),
+      codeLine: 4,
+      variables: { operation: 'enqueue(20)', front: 10, size: 2 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }, { value: 30, state: 'entering' }]), operation: 'enqueue(30)' },
+      description: d(locale,
+        'enqueue(30): Queue is [10, 20, 30]. 10 arrived first, so it\'s served first.',
+        'enqueue(30): La cola es [10, 20, 30]. 10 llegó primero, así que se atiende primero.',
+      ),
+      codeLine: 4,
+      variables: { operation: 'enqueue(30)', front: 10, size: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 10, state: 'normal' }, { value: 20, state: 'normal' }, { value: 30, state: 'normal' }, { value: 42, state: 'entering' }]), operation: 'enqueue(42)' },
+      description: d(locale,
+        'enqueue(42): 42 goes to the back. Processing order: 10 → 20 → 30 → 42.',
+        'enqueue(42): 42 va al final. Orden de procesamiento: 10 → 20 → 30 → 42.',
+      ),
+      codeLine: 4,
+      variables: { operation: 'enqueue(42)', front: 10, size: 4 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 20, state: 'normal' }, { value: 30, state: 'normal' }, { value: 42, state: 'normal' }]), operation: 'dequeue() → 10', removedValue: 10 },
+      description: d(locale,
+        'dequeue() → 10. FIFO: the first element added is removed first! Unlike a stack.',
+        'dequeue() → 10. FIFO: ¡el primer elemento añadido se retira primero! A diferencia de una pila.',
+      ),
+      codeLine: 8,
+      variables: { operation: 'dequeue()', removed: 10, front: 20, size: 3 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 30, state: 'normal' }, { value: 42, state: 'normal' }]), operation: 'dequeue() → 20', removedValue: 20 },
+      description: d(locale,
+        'dequeue() → 20. Now 30 is at the front. Elements are always processed in arrival order.',
+        'dequeue() → 20. Ahora 30 está al frente. Los elementos se procesan siempre en orden de llegada.',
+      ),
+      codeLine: 8,
+      variables: { operation: 'dequeue()', removed: 20, front: 30, size: 2 },
+    })
+
+    steps.push({
+      concept: { type: 'stackQueue', structure: 'queue', items: sq([{ value: 30, state: 'normal' }, { value: 42, state: 'normal' }]), operation: 'front() → 30' },
+      description: d(locale,
+        'front() → 30. View the front without removing it. All operations are O(1)!',
+        'front() → 30. Ver el frente sin eliminarlo. ¡Todas las operaciones son O(1)!',
+      ),
+      codeLine: 12,
+      variables: { operation: 'front()', front: 30, size: 2, complexity: 'O(1)' },
     })
 
     return steps

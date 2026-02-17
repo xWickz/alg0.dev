@@ -1,4 +1,13 @@
-import type { Step, ConceptState, BigOState, CallStackState, StackQueueState } from '@lib/types'
+import type {
+  Step,
+  BigOState,
+  CallStackState,
+  StackQueueState,
+  LinkedListState,
+  HashTableState,
+  BinaryTreeState,
+  TreeNodeData,
+} from '@lib/types'
 
 interface ConceptVisualizerProps {
   step: Step
@@ -15,6 +24,12 @@ export default function ConceptVisualizer({ step }: ConceptVisualizerProps) {
       return <CallStackViz state={concept} />
     case 'stackQueue':
       return <StackQueueViz state={concept} />
+    case 'linkedList':
+      return <LinkedListViz state={concept} />
+    case 'hashTable':
+      return <HashTableViz state={concept} />
+    case 'binaryTree':
+      return <BinaryTreeViz state={concept} />
     default:
       return null
   }
@@ -487,6 +502,334 @@ function QueueViz({
         </div>
         <div className="text-center text-[10px] font-mono text-neutral-500 mt-0.5">processing direction</div>
       </div>
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  LINKED LIST — Horizontal nodes with arrows
+// ════════════════════════════════════════════════════════════════
+
+const LL_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  normal: { bg: 'rgba(96,165,250,0.1)', border: 'rgba(96,165,250,0.25)', text: '#60a5fa' },
+  current: { bg: 'rgba(251,146,60,0.15)', border: 'rgba(251,146,60,0.4)', text: '#fb923c' },
+  new: { bg: 'rgba(74,222,128,0.15)', border: 'rgba(74,222,128,0.4)', text: '#4ade80' },
+  removing: { bg: 'rgba(248,113,113,0.15)', border: 'rgba(248,113,113,0.4)', text: '#f87171' },
+  found: { bg: 'rgba(250,204,21,0.15)', border: 'rgba(250,204,21,0.4)', text: '#facc15' },
+}
+
+function LinkedListViz({ state }: { state: LinkedListState }) {
+  const { nodes, operation } = state
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-4 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Linked List</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      {nodes.length === 0 ? (
+        <div className="font-mono text-sm text-neutral-600">null (empty list)</div>
+      ) : (
+        <div className="flex items-center gap-0 overflow-x-auto max-w-full px-4">
+          {/* HEAD label */}
+          <div className="flex flex-col items-center mr-1 shrink-0">
+            <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-wider mb-1">head</span>
+            <svg width="16" height="12" viewBox="0 0 16 12" className="text-neutral-400">
+              <path d="M0,6 L12,6 M8,2 L12,6 L8,10" stroke="currentColor" fill="none" strokeWidth="1.5" />
+            </svg>
+          </div>
+
+          {nodes.map((node, i) => {
+            const colors = LL_COLORS[node.state] ?? LL_COLORS.normal
+            const isLast = i === nodes.length - 1
+            return (
+              <div key={i} className="flex items-center shrink-0">
+                {/* Node box */}
+                <div
+                  className="w-14 h-14 rounded-lg border flex flex-col items-center justify-center font-mono transition-all duration-300 relative"
+                  style={{
+                    backgroundColor: colors.bg,
+                    borderColor: colors.border,
+                    color: colors.text,
+                    boxShadow: node.state !== 'normal' ? `0 0 16px ${colors.border}` : 'none',
+                  }}
+                >
+                  <span className="text-base font-bold">{node.value}</span>
+                </div>
+                {/* Arrow to next */}
+                <svg width="28" height="12" viewBox="0 0 28 12" className="shrink-0" style={{ color: isLast ? '#555' : colors.text }}>
+                  <line x1="2" y1="6" x2="22" y2="6" stroke="currentColor" strokeWidth="1.5" />
+                  <polygon points="20,2 26,6 20,10" fill="currentColor" />
+                </svg>
+              </div>
+            )
+          })}
+
+          {/* null terminator */}
+          <div className="font-mono text-xs text-neutral-600 shrink-0">null</div>
+        </div>
+      )}
+
+      {/* TAIL label below last node */}
+      {nodes.length > 0 && (
+        <div className="flex items-center gap-2 -mt-2">
+          <span className="text-[9px] font-mono text-neutral-500 uppercase tracking-wider">
+            tail = {nodes[nodes.length - 1].value}
+          </span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  HASH TABLE — Buckets with chained entries
+// ════════════════════════════════════════════════════════════════
+
+const HT_COLORS: Record<string, { bg: string; border: string; text: string }> = {
+  normal: { bg: 'rgba(96,165,250,0.08)', border: 'rgba(96,165,250,0.2)', text: '#60a5fa' },
+  new: { bg: 'rgba(74,222,128,0.15)', border: 'rgba(74,222,128,0.4)', text: '#4ade80' },
+  found: { bg: 'rgba(250,204,21,0.15)', border: 'rgba(250,204,21,0.4)', text: '#facc15' },
+  collision: { bg: 'rgba(251,146,60,0.15)', border: 'rgba(251,146,60,0.4)', text: '#fb923c' },
+}
+
+function HashTableViz({ state }: { state: HashTableState }) {
+  const { buckets, size, hashingKey, hashResult, operation } = state
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-3 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">Hash Table</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      {hashingKey != null && (
+        <div className="font-mono text-xs text-neutral-400">
+          hash(<span className="text-sky-300">"{hashingKey}"</span>)
+          {hashResult != null && <span> = <span className="text-amber-300">{hashResult}</span></span>}
+        </div>
+      )}
+
+      <div className="flex flex-col gap-1 w-full max-w-lg">
+        {Array.from({ length: size }, (_, idx) => {
+          const entries = buckets[idx] ?? []
+          const isTarget = hashResult === idx
+          return (
+            <div key={idx} className="flex items-center gap-2 h-9">
+              {/* Bucket index */}
+              <div
+                className="w-8 h-8 rounded flex items-center justify-center font-mono text-xs font-bold shrink-0 border transition-all duration-300"
+                style={{
+                  backgroundColor: isTarget ? 'rgba(251,146,60,0.12)' : 'rgba(255,255,255,0.03)',
+                  borderColor: isTarget ? 'rgba(251,146,60,0.4)' : 'rgba(255,255,255,0.08)',
+                  color: isTarget ? '#fb923c' : '#666',
+                }}
+              >
+                {idx}
+              </div>
+
+              {/* Arrow */}
+              <svg width="16" height="8" viewBox="0 0 16 8" className="shrink-0 text-neutral-600">
+                <line x1="0" y1="4" x2="12" y2="4" stroke="currentColor" strokeWidth="1" />
+                <polygon points="10,1.5 15,4 10,6.5" fill="currentColor" />
+              </svg>
+
+              {/* Entries chain */}
+              {entries.length === 0 ? (
+                <span className="text-[11px] font-mono text-neutral-700">empty</span>
+              ) : (
+                <div className="flex items-center gap-1 overflow-x-auto">
+                  {entries.map((entry, ei) => {
+                    const colors = HT_COLORS[entry.state] ?? HT_COLORS.normal
+                    return (
+                      <div key={ei} className="flex items-center shrink-0">
+                        <div
+                          className="px-2.5 py-1 rounded border font-mono text-[11px] transition-all duration-300"
+                          style={{
+                            backgroundColor: colors.bg,
+                            borderColor: colors.border,
+                            color: colors.text,
+                            boxShadow: entry.state !== 'normal' ? `0 0 12px ${colors.border}` : 'none',
+                          }}
+                        >
+                          {entry.key}:<span className="text-white/60">{entry.value}</span>
+                        </div>
+                        {ei < entries.length - 1 && (
+                          <svg width="14" height="8" viewBox="0 0 14 8" className="shrink-0 text-neutral-600 mx-0.5">
+                            <line x1="0" y1="4" x2="10" y2="4" stroke="currentColor" strokeWidth="1" />
+                            <polygon points="8,1.5 13,4 8,6.5" fill="currentColor" />
+                          </svg>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      <div className="text-[10px] font-mono text-neutral-600 mt-1">
+        hash(key) = sum of char codes % {size}
+      </div>
+    </div>
+  )
+}
+
+// ════════════════════════════════════════════════════════════════
+//  BINARY TREE — SVG tree for BST & Heap
+// ════════════════════════════════════════════════════════════════
+
+const TREE_COLORS: Record<string, { fill: string; stroke: string; text: string }> = {
+  normal: { fill: 'rgba(96,165,250,0.12)', stroke: 'rgba(96,165,250,0.3)', text: '#60a5fa' },
+  current: { fill: 'rgba(251,146,60,0.18)', stroke: 'rgba(251,146,60,0.5)', text: '#fb923c' },
+  new: { fill: 'rgba(74,222,128,0.18)', stroke: 'rgba(74,222,128,0.5)', text: '#4ade80' },
+  found: { fill: 'rgba(250,204,21,0.18)', stroke: 'rgba(250,204,21,0.5)', text: '#facc15' },
+  comparing: { fill: 'rgba(192,132,252,0.15)', stroke: 'rgba(192,132,252,0.4)', text: '#c084fc' },
+  placed: { fill: 'rgba(52,211,153,0.12)', stroke: 'rgba(52,211,153,0.3)', text: '#34d399' },
+}
+
+function BinaryTreeViz({ state }: { state: BinaryTreeState }) {
+  const { nodes, operation, treeType, heapType } = state
+
+  const W = 480
+  const H = 280
+  const R = 18
+  const TOP_Y = 36
+
+  const maxDepth = nodes.length > 0 ? Math.floor(Math.log2(nodes.length)) + 1 : 0
+  const levelH = maxDepth > 1 ? (H - TOP_Y - 20) / (maxDepth - 1) : 0
+
+  const getPos = (idx: number): { x: number; y: number } | null => {
+    if (idx >= nodes.length || !nodes[idx]) return null
+    const level = Math.floor(Math.log2(idx + 1))
+    const posInLevel = idx - (Math.pow(2, level) - 1)
+    const totalInLevel = Math.pow(2, level)
+    const x = ((posInLevel + 0.5) / totalInLevel) * W
+    const y = TOP_Y + level * levelH
+    return { x, y }
+  }
+
+  const label = treeType === 'heap'
+    ? `${heapType === 'min' ? 'Min' : 'Max'} Heap`
+    : 'Binary Search Tree'
+
+  const nonNullNodes = nodes.reduce((acc, n) => acc + (n ? 1 : 0), 0)
+
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-3 w-full">
+      <div className="text-neutral-500 font-mono text-[11px] uppercase tracking-widest">{label}</div>
+
+      {operation && (
+        <div className="font-mono text-xs px-3 py-1 rounded-full bg-white/5 border border-white/10 text-neutral-300">
+          {operation}
+        </div>
+      )}
+
+      {nonNullNodes === 0 ? (
+        <div className="font-mono text-sm text-neutral-600">empty tree</div>
+      ) : (
+        <svg viewBox={`0 0 ${W} ${H}`} className="w-full max-w-lg" style={{ maxHeight: `${H}px` }}>
+          {/* Edges */}
+          {nodes.map((node, idx) => {
+            if (!node) return null
+            const parentPos = getPos(idx)
+            if (!parentPos) return null
+
+            const children = [2 * idx + 1, 2 * idx + 2]
+            return children.map((childIdx) => {
+              if (childIdx >= nodes.length || !nodes[childIdx]) return null
+              const childPos = getPos(childIdx)
+              if (!childPos) return null
+              return (
+                <line
+                  key={`e-${idx}-${childIdx}`}
+                  x1={parentPos.x}
+                  y1={parentPos.y}
+                  x2={childPos.x}
+                  y2={childPos.y}
+                  stroke="rgba(255,255,255,0.1)"
+                  strokeWidth="1.5"
+                  className="transition-all duration-300"
+                />
+              )
+            })
+          })}
+
+          {/* Nodes */}
+          {nodes.map((node, idx) => {
+            if (!node) return null
+            const pos = getPos(idx)
+            if (!pos) return null
+            const colors = TREE_COLORS[node.state] ?? TREE_COLORS.normal
+            const isHighlighted = node.state !== 'normal'
+
+            return (
+              <g key={`n-${idx}`} className="transition-all duration-300">
+                {isHighlighted && (
+                  <circle cx={pos.x} cy={pos.y} r={R + 4} fill={colors.stroke} opacity="0.15" />
+                )}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={R}
+                  fill={colors.fill}
+                  stroke={colors.stroke}
+                  strokeWidth="1.5"
+                />
+                <text
+                  x={pos.x}
+                  y={pos.y + 1}
+                  textAnchor="middle"
+                  dominantBaseline="central"
+                  fill={colors.text}
+                  fontSize="13"
+                  fontFamily="monospace"
+                  fontWeight="bold"
+                >
+                  {node.value}
+                </text>
+              </g>
+            )
+          })}
+        </svg>
+      )}
+
+      {/* Heap array view */}
+      {treeType === 'heap' && nonNullNodes > 0 && (
+        <div className="flex flex-col items-center gap-1 mt-1">
+          <div className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">array view</div>
+          <div className="flex gap-1">
+            {nodes.map((node, idx) => {
+              if (!node) return null
+              const colors = TREE_COLORS[node.state] ?? TREE_COLORS.normal
+              return (
+                <div key={idx} className="flex flex-col items-center gap-0.5">
+                  <div
+                    className="w-9 h-9 rounded border flex items-center justify-center font-mono text-xs font-bold transition-all duration-300"
+                    style={{
+                      backgroundColor: colors.fill,
+                      borderColor: colors.stroke,
+                      color: colors.text,
+                    }}
+                  >
+                    {node.value}
+                  </div>
+                  <span className="text-[9px] font-mono text-neutral-600">{idx}</span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

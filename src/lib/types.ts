@@ -95,7 +95,54 @@ export interface StackQueueState {
   removedValue?: number | null
 }
 
-export type ConceptState = BigOState | CallStackState | StackQueueState
+// ── Data structure visualization types ──
+
+export interface LinkedListNodeData {
+  value: number
+  state: 'normal' | 'current' | 'new' | 'removing' | 'found'
+}
+
+export interface LinkedListState {
+  type: 'linkedList'
+  nodes: LinkedListNodeData[]
+  operation?: string
+}
+
+export interface HashEntry {
+  key: string
+  value: number
+  state: 'normal' | 'new' | 'found' | 'collision'
+}
+
+export interface HashTableState {
+  type: 'hashTable'
+  buckets: HashEntry[][]
+  size: number
+  hashingKey?: string
+  hashResult?: number
+  operation?: string
+}
+
+export interface TreeNodeData {
+  value: number
+  state: 'normal' | 'current' | 'new' | 'found' | 'comparing' | 'placed'
+}
+
+export interface BinaryTreeState {
+  type: 'binaryTree'
+  nodes: (TreeNodeData | null)[]
+  operation?: string
+  treeType: 'bst' | 'heap'
+  heapType?: 'min' | 'max'
+}
+
+export type ConceptState =
+  | BigOState
+  | CallStackState
+  | StackQueueState
+  | LinkedListState
+  | HashTableState
+  | BinaryTreeState
 
 export interface Step {
   array?: number[]
