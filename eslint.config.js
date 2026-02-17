@@ -1,3 +1,6 @@
 import neostandard from 'neostandard'
 
-export default neostandard({})
+export default [
+  { ignores: ['dist/**'] },
+  ...neostandard({}),
+]
