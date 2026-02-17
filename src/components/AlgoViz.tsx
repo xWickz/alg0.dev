@@ -74,7 +74,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     side: 'right',
   })
 
-  useKeyboardShortcuts({ togglePlay, stepForward, stepBackward })
+  useKeyboardShortcuts({ togglePlay, stepForward, stepBackward, onTabChange: setActiveTab })
 
   const selectAlgorithm = useCallback((algo: Algorithm) => {
     selectAlgorithmBase(algo)
@@ -110,7 +110,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
 
   const renderVisualization = () => {
     if (!selectedAlgorithm || !currentStepData) {
-      return <WelcomeScreen t={t} />
+      return <WelcomeScreen t={t} locale={locale} onSelectAlgorithm={selectAlgorithm} />
     }
 
     switch (selectedAlgorithm.visualization) {
