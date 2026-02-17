@@ -34,7 +34,7 @@ export default function Controls({
     'p-1.5 rounded-md hover:bg-white/[0.08] disabled:opacity-20 disabled:hover:bg-transparent transition-all text-neutral-500 hover:text-white active:scale-95'
 
   return (
-    <div className="flex items-center gap-5" role="toolbar" aria-label={t.controlsLabel}>
+    <div className="flex items-center gap-3 lg:gap-5 min-w-0" role="toolbar" aria-label={t.controlsLabel}>
       {/* Playback buttons */}
       <div className="flex items-center gap-0.5" role="group" aria-label={t.controlsLabel}>
         {/* Step backward */}
@@ -137,8 +137,8 @@ export default function Controls({
       </div>
 
       {/* Progress bar + counter */}
-      <div className="flex items-center gap-3">
-        <div className="relative w-36 group cursor-pointer">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="relative w-20 lg:w-36 group cursor-pointer shrink-0">
           <div className="h-0.5 bg-white/[0.08] rounded-full overflow-hidden" aria-hidden="true">
             <div
               className="h-full bg-white rounded-full transition-all duration-200"
@@ -171,8 +171,8 @@ export default function Controls({
       </div>
 
       {/* Speed */}
-      <div className="flex items-center gap-2">
-        <span className="text-[10px] text-neutral-600 uppercase tracking-wider font-medium" id="speed-label">
+      <div className="flex items-center gap-2 shrink-0">
+        <span className="text-[10px] text-neutral-600 uppercase tracking-wider font-medium hidden sm:inline" id="speed-label">
           {t.speed}
         </span>
         <input
@@ -187,7 +187,7 @@ export default function Controls({
           aria-valuemax={5}
           aria-valuenow={speed}
           aria-valuetext={t.speedLevel.replace('{n}', String(speed))}
-          className="w-16"
+          className="w-14 lg:w-16"
         />
       </div>
     </div>

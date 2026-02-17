@@ -58,7 +58,7 @@ export default function Header({
       role="banner"
     >
       {/* Left: Logo + Breadcrumb */}
-      <div className="flex items-center gap-2 md:gap-3 min-w-0 md:min-w-[260px]">
+      <div className="flex items-center gap-2 md:gap-3 min-w-0 shrink-0">
         {isMobile ? (
           <button
             onClick={onToggleMobileSidebar}
@@ -140,23 +140,25 @@ export default function Header({
 
       {/* Center: Controls (hidden on mobile, shown in bottom bar instead) */}
       {!isMobile && (
-        <Controls
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          isPlaying={isPlaying}
-          speed={speed}
-          onTogglePlay={onTogglePlay}
-          onStepForward={onStepForward}
-          onStepBackward={onStepBackward}
-          onSpeedChange={onSpeedChange}
-          onStepChange={onStepChange}
-          disabled={totalSteps === 0}
-          locale={locale}
-        />
+        <div className="flex-1 flex justify-center min-w-0 mx-2">
+          <Controls
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            isPlaying={isPlaying}
+            speed={speed}
+            onTogglePlay={onTogglePlay}
+            onStepForward={onStepForward}
+            onStepBackward={onStepBackward}
+            onSpeedChange={onSpeedChange}
+            onStepChange={onStepChange}
+            disabled={totalSteps === 0}
+            locale={locale}
+          />
+        </div>
       )}
 
       {/* Right: Language switcher + code panel toggle */}
-      <div className="flex items-center justify-end gap-2 min-w-0 md:min-w-[260px]">
+      <div className="flex items-center justify-end gap-2 min-w-0 shrink-0">
         {isMobile && selectedAlgorithm && (
           <button
             onClick={onToggleMobileCodePanel}
