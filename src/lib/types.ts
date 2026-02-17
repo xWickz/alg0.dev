@@ -201,6 +201,7 @@ export interface Step {
   codeLine?: number
   description?: string
   variables?: Record<string, string | number | boolean | null>
+  consoleOutput?: string[]
 }
 
 export type Difficulty = 'easy' | 'intermediate' | 'advanced'

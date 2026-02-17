@@ -1,6 +1,11 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { Locale } from '@i18n/translations'
-import { translations, getAlgorithmDescription, getAlgorithmMetaTitle, getAlgorithmMetaDescription } from '@i18n/translations'
+import {
+  translations,
+  getAlgorithmDescription,
+  getAlgorithmMetaTitle,
+  getAlgorithmMetaDescription,
+} from '@i18n/translations'
 import { algorithms, categories } from '@lib/algorithms'
 import { usePlayback } from '@hooks/usePlayback'
 import { useResizablePanel } from '@hooks/useResizablePanel'
@@ -59,6 +64,12 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const [mobileCodePanelOpen, setMobileCodePanelOpen] = useState(false)
 
+  const initialAlgorithm = initialAlgorithmId
+    ? (algorithms.find((a) => a.id === initialAlgorithmId) ?? null)
+    : null
+
+  console.log('initialAlgorithm', initialAlgorithm)
+
   const {
     selectedAlgorithm,
     steps,
@@ -73,14 +84,23 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     stepBackward,
     togglePlay,
     currentStepData,
-  } = usePlayback(locale)
+  } = usePlayback(locale, initialAlgorithm)
 
-  useEffect(() => {
-    if (initialAlgorithmId) {
-      const algo = algorithms.find((a) => a.id === initialAlgorithmId)
-      if (algo) selectAlgorithmBase(algo)
-    }
-  }, [])
+  console.log({
+    selectedAlgorithm,
+    steps,
+    currentStep,
+    setCurrentStep,
+    isPlaying,
+    speed,
+    setSpeed,
+    selectAlgorithm: selectAlgorithmBase,
+    clearSelection,
+    stepForward,
+    stepBackward,
+    togglePlay,
+    currentStepData,
+  })
 
   const sidebar = useResizablePanel({
     maxWidth: SIDEBAR_MAX,
@@ -117,7 +137,9 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     } else {
       document.body.style.overflow = ''
     }
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [mobileSidebarOpen, mobileCodePanelOpen])
 
   const updateMetaDescription = useCallback((description: string) => {
@@ -125,16 +147,19 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
     if (meta) meta.setAttribute('content', description)
   }, [])
 
-  const selectAlgorithm = useCallback((algo: Algorithm) => {
-    selectAlgorithmBase(algo)
-    setActiveTab('code')
-    setMobileSidebarOpen(false)
-    codePanel.expand()
-    const url = getAlgorithmUrl(locale, algo.id)
-    window.history.pushState({ algorithmId: algo.id }, '', url)
-    document.title = getAlgorithmMetaTitle(locale, algo.id, algo.name)
-    updateMetaDescription(getAlgorithmMetaDescription(locale, algo.id))
-  }, [locale, selectAlgorithmBase, codePanel.expand, updateMetaDescription])
+  const selectAlgorithm = useCallback(
+    (algo: Algorithm) => {
+      selectAlgorithmBase(algo)
+      setActiveTab('code')
+      setMobileSidebarOpen(false)
+      codePanel.expand()
+      const url = getAlgorithmUrl(locale, algo.id)
+      window.history.pushState({ algorithmId: algo.id }, '', url)
+      document.title = getAlgorithmMetaTitle(locale, algo.id, algo.name)
+      updateMetaDescription(getAlgorithmMetaDescription(locale, algo.id))
+    },
+    [locale, selectAlgorithmBase, codePanel.expand, updateMetaDescription],
+  )
 
   useEffect(() => {
     const handlePopState = () => {
@@ -156,7 +181,14 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
 
     window.addEventListener('popstate', handlePopState)
     return () => window.removeEventListener('popstate', handlePopState)
-  }, [locale, selectAlgorithmBase, clearSelection, t.siteTitle, t.siteDescription, updateMetaDescription])
+  }, [
+    locale,
+    selectAlgorithmBase,
+    clearSelection,
+    t.siteTitle,
+    t.siteDescription,
+    updateMetaDescription,
+  ])
 
   const getLocalizedDescription = (algo: Algorithm): string => {
     return getAlgorithmDescription(locale, algo.id) ?? algo.description
@@ -214,7 +246,9 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               className={`bg-black overflow-hidden ${
                 sidebar.isDragging ? '' : 'transition-all duration-300 ease-in-out'
               }`}
-              style={{ width: sidebar.isDragging ? sidebar.width : sidebar.collapsed ? 0 : SIDEBAR_MAX }}
+              style={{
+                width: sidebar.isDragging ? sidebar.width : sidebar.collapsed ? 0 : SIDEBAR_MAX,
+              }}
               aria-label={locale === 'es' ? 'Categorías de algoritmos' : 'Algorithm categories'}
               aria-hidden={sidebar.collapsed}
               inert={sidebar.collapsed || undefined}
@@ -294,7 +328,14 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                     className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors"
                     aria-label={locale === 'es' ? 'Cerrar menú' : 'Close menu'}
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -316,7 +357,9 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
           className="flex-1 flex flex-col overflow-hidden min-w-0"
           aria-label="Algorithm visualization"
         >
-          <div className="flex-1 flex flex-col p-4 md:p-8 overflow-auto">{renderVisualization()}</div>
+          <div className="flex-1 flex flex-col p-4 md:p-8 overflow-auto">
+            {renderVisualization()}
+          </div>
 
           {/* Step description */}
           <div className="px-4 pb-3 md:px-8 md:pb-5" aria-live="polite" aria-atomic="true">
@@ -362,7 +405,13 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
               className={`bg-black overflow-hidden ${
                 codePanel.isDragging ? '' : 'transition-all duration-300 ease-in-out'
               }`}
-              style={{ width: codePanel.isDragging ? codePanel.width : codePanel.collapsed ? 0 : CODEPANEL_MAX }}
+              style={{
+                width: codePanel.isDragging
+                  ? codePanel.width
+                  : codePanel.collapsed
+                    ? 0
+                    : CODEPANEL_MAX,
+              }}
               aria-label={locale === 'es' ? 'Panel de código y detalles' : 'Code and details panel'}
               aria-hidden={codePanel.collapsed}
               inert={codePanel.collapsed || undefined}
@@ -386,6 +435,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                     difficulty={selectedAlgorithm.difficulty}
                     currentLine={currentStepData?.codeLine}
                     variables={currentStepData?.variables}
+                    consoleOutput={currentStepData?.consoleOutput}
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
                     locale={locale}
@@ -428,7 +478,14 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                     className="w-7 h-7 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors"
                     aria-label={locale === 'es' ? 'Cerrar panel' : 'Close panel'}
                   >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden="true">
+                    <svg
+                      className="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
@@ -440,6 +497,7 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                     difficulty={selectedAlgorithm.difficulty}
                     currentLine={currentStepData?.codeLine}
                     variables={currentStepData?.variables}
+                    consoleOutput={currentStepData?.consoleOutput}
                     activeTab={activeTab}
                     onTabChange={setActiveTab}
                     locale={locale}
@@ -463,8 +521,19 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
             className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors shrink-0"
             aria-label={locale === 'es' ? 'Abrir menú' : 'Open menu'}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
             </svg>
           </button>
           <div className="flex-1 flex items-center justify-center min-w-0">
@@ -476,7 +545,12 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                 aria-label={t.stepBackward}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M10.5 14.0607L9.96966 13.5303L5.14644 8.7071C4.75592 8.31658 4.75592 7.68341 5.14644 7.29289L9.96966 2.46966L10.5 1.93933L11.5607 2.99999L11.0303 3.53032L6.56065 7.99999L11.0303 12.4697L11.5607 13L10.5 14.0607Z" fill="currentColor" />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M10.5 14.0607L9.96966 13.5303L5.14644 8.7071C4.75592 8.31658 4.75592 7.68341 5.14644 7.29289L9.96966 2.46966L10.5 1.93933L11.5607 2.99999L11.0303 3.53032L6.56065 7.99999L11.0303 12.4697L11.5607 13L10.5 14.0607Z"
+                    fill="currentColor"
+                  />
                 </svg>
               </button>
               <button
@@ -485,13 +559,28 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                 aria-label={t.playPause}
               >
                 {isPlaying ? (
-                  <svg className="w-3.5 h-3.5 text-black" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg
+                    className="w-3.5 h-3.5 text-black"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
                     <rect x="6" y="5" width="4" height="14" rx="1" />
                     <rect x="14" y="5" width="4" height="14" rx="1" />
                   </svg>
                 ) : (
-                  <svg className="w-3 h-3 text-black" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" clipRule="evenodd" d="M14.5528 7.77638C14.737 7.86851 14.737 8.13147 14.5528 8.2236L1.3618 14.8191C1.19558 14.9022 1 14.7813 1 14.5955L1 1.4045C1 1.21865 1.19558 1.09778 1.3618 1.18089L14.5528 7.77638Z" fill="currentColor" />
+                  <svg
+                    className="w-3 h-3 text-black"
+                    viewBox="0 0 16 16"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M14.5528 7.77638C14.737 7.86851 14.737 8.13147 14.5528 8.2236L1.3618 14.8191C1.19558 14.9022 1 14.7813 1 14.5955L1 1.4045C1 1.21865 1.19558 1.09778 1.3618 1.18089L14.5528 7.77638Z"
+                      fill="currentColor"
+                    />
                   </svg>
                 )}
               </button>
@@ -502,7 +591,12 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
                 aria-label={t.stepForward}
               >
                 <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" clipRule="evenodd" d="M5.50001 1.93933L6.03034 2.46966L10.8536 7.29288C11.2441 7.68341 11.2441 8.31657 10.8536 8.7071L6.03034 13.5303L5.50001 14.0607L4.43935 13L4.96968 12.4697L9.43935 7.99999L4.96968 3.53032L4.43935 2.99999L5.50001 1.93933Z" fill="currentColor" />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M5.50001 1.93933L6.03034 2.46966L10.8536 7.29288C11.2441 7.68341 11.2441 8.31657 10.8536 8.7071L6.03034 13.5303L5.50001 14.0607L4.43935 13L4.96968 12.4697L9.43935 7.99999L4.96968 3.53032L4.43935 2.99999L5.50001 1.93933Z"
+                    fill="currentColor"
+                  />
                 </svg>
               </button>
             </div>
@@ -515,8 +609,19 @@ export default function AlgoViz({ locale = 'en', initialAlgorithmId }: AlgoVizPr
             className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white/[0.06] text-neutral-400 hover:text-white transition-colors shrink-0"
             aria-label={locale === 'es' ? 'Ver código' : 'View code'}
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5"
+              />
             </svg>
           </button>
         </div>

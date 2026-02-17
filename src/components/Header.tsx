@@ -27,8 +27,12 @@ interface HeaderProps {
   onToggleMobileCodePanel?: () => void
 }
 
-function getLocaleUrl(targetLocale: Locale) {
-  return targetLocale === 'en' ? '/' : `/${targetLocale}/`
+function getLocaleUrl(targetLocale: Locale, algorithmId?: string) {
+  if (targetLocale === 'en') {
+    return algorithmId ? `/${algorithmId}` : '/'
+  }
+
+  return algorithmId ? `/${targetLocale}/${algorithmId}` : `/${targetLocale}/`
 }
 
 export default function Header({
@@ -196,7 +200,7 @@ export default function Header({
           {locales.map((l) => (
             <a
               key={l}
-              href={getLocaleUrl(l)}
+              href={getLocaleUrl(l, selectedAlgorithm?.id)}
               className={`px-2 md:px-2.5 py-1 text-[11px] font-medium rounded-md transition-all ${
                 l === locale
                   ? 'bg-white text-black'

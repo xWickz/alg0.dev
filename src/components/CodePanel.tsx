@@ -1,15 +1,33 @@
-import { useRef, useEffect, useCallback, useMemo } from 'react'
-import Editor, { type Monaco, useMonaco } from '@monaco-editor/react'
+import { useState, useRef, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
+import type { Monaco } from '@monaco-editor/react'
 import type { Locale } from '@i18n/translations'
 import { translations } from '@i18n/translations'
 import type { Difficulty } from '@lib/types'
 import ComplexityChart from '@components/ComplexityChart'
 
-const DIFFICULTY_CONFIG: Record<Difficulty, { en: string; es: string; color: string; bg: string }> = {
-  easy: { en: 'Easy', es: 'Fácil', color: 'text-emerald-400', bg: 'bg-emerald-400/10 border-emerald-400/20' },
-  intermediate: { en: 'Intermediate', es: 'Intermedio', color: 'text-amber-400', bg: 'bg-amber-400/10 border-amber-400/20' },
-  advanced: { en: 'Advanced', es: 'Avanzado', color: 'text-red-400', bg: 'bg-red-400/10 border-red-400/20' },
-}
+const LazyEditor = lazy(() => import('@monaco-editor/react'))
+
+const DIFFICULTY_CONFIG: Record<Difficulty, { en: string; es: string; color: string; bg: string }> =
+  {
+    easy: {
+      en: 'Easy',
+      es: 'Fácil',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-400/10 border-emerald-400/20',
+    },
+    intermediate: {
+      en: 'Intermediate',
+      es: 'Intermedio',
+      color: 'text-amber-400',
+      bg: 'bg-amber-400/10 border-amber-400/20',
+    },
+    advanced: {
+      en: 'Advanced',
+      es: 'Avanzado',
+      color: 'text-red-400',
+      bg: 'bg-red-400/10 border-red-400/20',
+    },
+  }
 
 interface CodePanelProps {
   code: string
@@ -17,6 +35,7 @@ interface CodePanelProps {
   difficulty?: Difficulty
   currentLine?: number
   variables?: Record<string, string | number | boolean | null>
+  consoleOutput?: string[]
   activeTab: 'code' | 'about'
   onTabChange: (tab: 'code' | 'about') => void
   locale?: Locale
@@ -45,20 +64,28 @@ export default function CodePanel({
   difficulty,
   currentLine,
   variables,
+  consoleOutput,
   activeTab,
   onTabChange,
   locale = 'en',
 }: CodePanelProps) {
   const t = translations[locale]
+  const [isMounted, setIsMounted] = useState(false)
+  const [editorReady, setEditorReady] = useState(false)
   const editorRef = useRef<any>(null)
+  const monacoRef = useRef<Monaco | null>(null)
   const decorationsRef = useRef<string[]>([])
-  const monaco = useMonaco()
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const handleEditorDidMount = useCallback(
     (editor: any, monacoInstance: Monaco) => {
       defineTheme(monacoInstance)
       monacoInstance.editor.setTheme('algoviz-dark')
       editorRef.current = editor
+      monacoRef.current = monacoInstance
 
       // Apply initial line highlight
       if (currentLine != null && currentLine > 0) {
@@ -76,6 +103,8 @@ export default function CodePanel({
           ],
         )
       }
+
+      setEditorReady(true)
     },
     [currentLine],
   )
@@ -92,6 +121,7 @@ export default function CodePanel({
   // Update line highlight + inline variable annotation when currentLine/variables change
   useEffect(() => {
     const editor = editorRef.current
+    const monaco = monacoRef.current
     if (!editor || !monaco) return
 
     if (currentLine != null && currentLine > 0) {
@@ -131,7 +161,7 @@ export default function CodePanel({
     } else {
       decorationsRef.current = editor.deltaDecorations(decorationsRef.current, [])
     }
-  }, [currentLine, monaco, inlineVarText])
+  }, [currentLine, editorReady, inlineVarText])
 
   return (
     <div className="flex flex-col h-full">
@@ -193,48 +223,105 @@ export default function CodePanel({
           id="tabpanel-code"
           aria-labelledby="tab-code"
         >
-          <div className="flex-1 overflow-hidden">
-            <Editor
-              defaultLanguage="javascript"
-              value={code}
-              theme="vs-dark"
-              onMount={handleEditorDidMount}
-              options={{
-                readOnly: true,
-                domReadOnly: true,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                fontSize: 13,
-                lineHeight: 28,
-                fontFamily: "'Geist Mono', ui-monospace, monospace",
-                fontLigatures: true,
-                renderLineHighlight: 'none',
-                overviewRulerLanes: 0,
-                hideCursorInOverviewRuler: true,
-                overviewRulerBorder: false,
-                scrollbar: {
-                  vertical: 'hidden',
-                  horizontal: 'hidden',
-                  handleMouseWheel: true,
-                },
-                lineNumbers: 'on',
-                lineDecorationsWidth: 12,
-                lineNumbersMinChars: 3,
-                glyphMargin: false,
-                folding: false,
-                contextmenu: false,
-                selectionHighlight: false,
-                occurrencesHighlight: 'off',
-                renderLineHighlightOnlyWhenFocus: false,
-                matchBrackets: 'never',
-                padding: { top: 12, bottom: 12 },
-                guides: { indentation: false },
-                wordWrap: 'off',
-                cursorStyle: 'line-thin',
-                cursorBlinking: 'solid',
-              }}
-            />
+          <div
+            className="flex-1 overflow-hidden transition-opacity duration-500 ease-in-out"
+            style={{ opacity: editorReady ? 1 : 0 }}
+          >
+            {isMounted && (
+              <Suspense fallback={null}>
+                <LazyEditor
+                  defaultLanguage="javascript"
+                  value={code}
+                  theme="vs-dark"
+                  onMount={handleEditorDidMount}
+                  loading={null}
+                  options={{
+                    readOnly: true,
+                    domReadOnly: true,
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    fontSize: 13,
+                    lineHeight: 28,
+                    fontFamily: "'Geist Mono', ui-monospace, monospace",
+                    fontLigatures: true,
+                    renderLineHighlight: 'none',
+                    overviewRulerLanes: 0,
+                    hideCursorInOverviewRuler: true,
+                    overviewRulerBorder: false,
+                    scrollbar: {
+                      vertical: 'hidden',
+                      horizontal: 'hidden',
+                      handleMouseWheel: true,
+                    },
+                    lineNumbers: 'on',
+                    lineDecorationsWidth: 12,
+                    lineNumbersMinChars: 3,
+                    glyphMargin: false,
+                    folding: false,
+                    contextmenu: false,
+                    selectionHighlight: false,
+                    occurrencesHighlight: 'off',
+                    renderLineHighlightOnlyWhenFocus: false,
+                    matchBrackets: 'never',
+                    padding: { top: 12, bottom: 12 },
+                    guides: { indentation: false },
+                    wordWrap: 'off',
+                    cursorStyle: 'line-thin',
+                    cursorBlinking: 'solid',
+                  }}
+                />
+              </Suspense>
+            )}
           </div>
+
+          {/* Console output panel */}
+          {consoleOutput && consoleOutput.length > 0 && (
+            <div
+              className="shrink-0 border-t border-white/[0.08] max-h-[140px] flex flex-col"
+              role="region"
+              aria-label={locale === 'es' ? 'Salida de consola' : 'Console output'}
+            >
+              <div className="px-4 py-2 flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-1.5">
+                  <svg
+                    className="w-3.5 h-3.5 text-neutral-500"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6.75 7.5l3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0021 18V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v12a2.25 2.25 0 002.25 2.25z"
+                    />
+                  </svg>
+                  <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+                    Console
+                  </span>
+                  <span className="text-[10px] text-neutral-600 tabular-nums">
+                    ({consoleOutput.length})
+                  </span>
+                </div>
+              </div>
+              <div className="px-4 pb-3 overflow-auto flex-1 min-h-0" aria-live="polite">
+                {consoleOutput.map((line, i) => (
+                  <div
+                    key={i}
+                    className={`flex gap-2 text-[11px] font-mono leading-[18px] ${
+                      i === consoleOutput.length - 1 ? 'text-emerald-300/90' : 'text-neutral-500'
+                    }`}
+                  >
+                    <span className="text-neutral-600 select-none shrink-0" aria-hidden="true">
+                      {'›'}
+                    </span>
+                    <span className="break-all">{line}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Variables panel */}
           {variables && Object.keys(variables).length > 0 && (
@@ -332,19 +419,22 @@ export default function CodePanel({
                 if (i === 0 && line.trim()) {
                   elements.push(
                     <div key={i} className="mb-4">
-                      <h3 className="text-lg font-semibold text-white font-heading">
-                        {line}
-                      </h3>
-                      {difficulty && (() => {
-                        const cfg = DIFFICULTY_CONFIG[difficulty]
-                        const label = locale === 'es' ? cfg.es : cfg.en
-                        return (
-                          <span className={`inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 text-[11px] font-semibold rounded-full border ${cfg.bg} ${cfg.color}`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${difficulty === 'easy' ? 'bg-emerald-400' : difficulty === 'intermediate' ? 'bg-amber-400' : 'bg-red-400'}`} />
-                            {label}
-                          </span>
-                        )
-                      })()}
+                      <h3 className="text-lg font-semibold text-white font-heading">{line}</h3>
+                      {difficulty &&
+                        (() => {
+                          const cfg = DIFFICULTY_CONFIG[difficulty]
+                          const label = locale === 'es' ? cfg.es : cfg.en
+                          return (
+                            <span
+                              className={`inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 text-[11px] font-semibold rounded-full border ${cfg.bg} ${cfg.color}`}
+                            >
+                              <span
+                                className={`w-1.5 h-1.5 rounded-full ${difficulty === 'easy' ? 'bg-emerald-400' : difficulty === 'intermediate' ? 'bg-amber-400' : 'bg-red-400'}`}
+                              />
+                              {label}
+                            </span>
+                          )
+                        })()}
                     </div>,
                   )
                 } else if (
@@ -399,7 +489,11 @@ export default function CodePanel({
                 elements.splice(
                   1,
                   0,
-                  <ComplexityChart key="complexity-chart" description={description} locale={locale} />,
+                  <ComplexityChart
+                    key="complexity-chart"
+                    description={description}
+                    locale={locale}
+                  />,
                 )
               }
 

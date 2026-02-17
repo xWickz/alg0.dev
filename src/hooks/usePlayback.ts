@@ -10,9 +10,9 @@ export const SPEED_MAP: Record<number, number> = {
   5: 50,
 }
 
-export function usePlayback(locale: Locale) {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState<Algorithm | null>(null)
-  const [steps, setSteps] = useState<Step[]>([])
+export function usePlayback(locale: Locale, initialAlgorithm?: Algorithm | null) {
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<Algorithm | null>(initialAlgorithm ?? null)
+  const [steps, setSteps] = useState<Step[]>(() => initialAlgorithm ? initialAlgorithm.generateSteps(locale) : [])
   const [currentStep, setCurrentStep] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(2)
