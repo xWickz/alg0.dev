@@ -14,16 +14,16 @@
     "@astrojs/react": "4.4.2",
     "@monaco-editor/react": "4.7.0",
     "@tailwindcss/vite": "4.1.18",
-    "astro": "5.17.1",
+    "astro": "5.17.2",
     "geist": "1.7.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "tailwindcss": "4.1.18"
   },
   "devDependencies": {
-    "@types/react": "19.2.13",
+    "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
-    "eslint": "9.18.0",
+    "eslint": "9.39.2",
     "neostandard": "0.12.2",
     "prettier": "3.8.1"
   }
